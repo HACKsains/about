@@ -1,0 +1,74 @@
+[
+  {
+    "title": "Pelatihan Cyber Security LKK PWNU Jatim",
+    "issuer": "LKK PWNU Jawa Timur",
+    "category": "keamanan",
+    "img": "assets/img/certificates/cert_cyber_lkknu.jpg",
+    "desc": "Pelatihan Keamanan Siber bagi Lembaga Kemaslahatan Keluarga PWNU Jawa Timur",
+    "pdf_name": "Pelatihan Cyber Security bagi LKK PWNU Jatim 981.59 - SYAHRIEL ANDIKA_sign.pdf"
+  },
+  {
+    "title": "Webinar Mental Health Santri & Pemuda",
+    "issuer": "RMI PBNU",
+    "category": "akademik",
+    "img": "assets/img/certificates/cert_webinar_rmi.jpg",
+    "desc": "Webinar Kesehatan Mental RMI Nahdlatul Ulama",
+    "pdf_name": "Sertifikat Webinar RMI Mental Health - Syahriel Andika.pdf"
+  },
+  {
+    "title": "Sertifikat Pelatihan Keislaman & Organisasi",
+    "issuer": "PWNU / Lembaga NU",
+    "category": "organisasi",
+    "img": "assets/img/certificates/cert_sertifikat_umum.jpg",
+    "desc": "Sertifikat Partisipasi & Pelatihan Kepemimpinan Organisasi",
+    "pdf_name": "Sertifikat.pdf"
+  },
+  {
+    "title": "Sertifikasi Keamanan Siber & Sistem Informasi",
+    "issuer": "Cyber & IT Academy",
+    "category": "keamanan",
+    "img": "assets/img/certificates/cert_syahriel_13368.jpg",
+    "desc": "Sertifikasi Kompetensi Keamanan Aplikasi & Infrastruktur",
+    "pdf_name": "Sertifikat_SyahrielAndika__13368b90bff0d69317569576957YET13038.pdf"
+  },
+  {
+    "title": "Sertifikasi Network & Threat Intelligence",
+    "issuer": "Cyber & IT Academy",
+    "category": "keamanan",
+    "img": "assets/img/certificates/cert_syahriel_10567.jpg",
+    "desc": "Pelatihan Deteksi & Mitigasi Serangan Siber",
+    "pdf_name": "Sertifikat_SyahrielAndika__105673f781fe9dad1732212767IHY6Q9810.pdf"
+  },
+  {
+    "title": "Workshop Pemanfaatan AI: Etika & Tanggung Jawab",
+    "issuer": "Kementerian Komunikasi dan Digital RI (Komdigi)",
+    "category": "teknologi",
+    "img": "assets/img/certificates/cert_ai_etika.jpg",
+    "desc": "Workshop Etika & Tanggung Jawab dalam Penggunaan Kecerdasan Buatan",
+    "pdf_name": "Workshop Pemanfaatan AI - Etika dan Tanggung Jawab dalam Penggunaan AI  893.105 - SYAHRIEL ANDIKA_sign.pdf"
+  },
+  {
+    "title": "Penerapan Agentic AI dalam Otomasi Berbasis LLM",
+    "issuer": "Komdigi RI / EJSC Bakorwil Pamekasan",
+    "category": "teknologi",
+    "img": "assets/img/certificates/cert_agentic_ai.jpg",
+    "desc": "Pelatihan Implementasi Agentic AI & LLM Automation",
+    "pdf_name": "Penerapan Agentic AI dalam Sistem Otomasi Berbasis LLM (EJSC Pamekasan) 1112.13 - SYAHRIEL ANDIKA_sign (2).pdf"
+  },
+  {
+    "title": "LAKMUD (Latihan Kader Muda)",
+    "issuer": "PAC IPNU-IPPNU Sukodono",
+    "category": "kaderisasi",
+    "img": "assets/img/certificates/cert_lakmud.jpg",
+    "desc": "Kaderisasi Formal Menengah Tingkat PAC IPNU-IPPNU",
+    "pdf_name": "SERTIFIKAT LAKMUD.pdf"
+  },
+  {
+    "title": "MAKESTA (Masa Kesetiaan Anggota)",
+    "issuer": "PR IPNU-IPPNU Tumpeng",
+    "category": "kaderisasi",
+    "img": "assets/img/certificates/cert_makesta.jpg",
+    "desc": "Kaderisasi Formal Tingkat Dasar IPNU-IPPNU",
+    "pdf_name": "SERTIFIKAT MAKESTA.pdf"
+  }
+]

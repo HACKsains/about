@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <defs>
+    <linearGradient id="ag" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0D7A87"/>
+      <stop offset="100%" stop-color="#1D3B5E"/>
+    </linearGradient>
+  </defs>
+  <!-- Shield shape -->
+  <path d="M24,4 L42,10 L42,28 Q42,40 24,46 Q6,40 6,28 L6,10 Z" fill="url(#ag)"/>
+  <!-- Inner shield border -->
+  <path d="M24,8 L39,13 L39,28 Q39,38 24,43 Q9,38 9,28 L9,13 Z" fill="none" stroke="white" stroke-width="1" opacity="0.4"/>
+  <!-- Star burst / movement symbol -->
+  <polygon points="24,13 26.5,20 34,20 28,24.5 30.5,31.5 24,27 17.5,31.5 20,24.5 14,20 21.5,20" fill="white" opacity="0.95"/>
+  <!-- GP text -->
+  <text x="24" y="39" text-anchor="middle" font-family="sans-serif" font-weight="bold" font-size="7" fill="white" letter-spacing="1">GP</text>
+</svg>

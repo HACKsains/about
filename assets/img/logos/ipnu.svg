@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <defs>
+    <linearGradient id="ig" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1D3B5E"/>
+      <stop offset="100%" stop-color="#0D7A87"/>
+    </linearGradient>
+  </defs>
+  <!-- Pentagon shield -->
+  <polygon points="24,4 42,14 42,32 24,44 6,32 6,14" fill="url(#ig)"/>
+  <!-- Torch handle -->
+  <rect x="22" y="28" width="4" height="10" rx="2" fill="white" opacity="0.9"/>
+  <!-- Torch flame -->
+  <ellipse cx="24" cy="23" rx="5" ry="8" fill="#52B2DC" opacity="0.9"/>
+  <ellipse cx="24" cy="24" rx="3" ry="5.5" fill="white" opacity="0.8"/>
+  <ellipse cx="24" cy="25" rx="1.5" ry="3" fill="#0D7A87" opacity="0.9"/>
+  <!-- IPNU text -->
+  <text x="24" y="43" text-anchor="middle" font-family="sans-serif" font-weight="bold" font-size="5" fill="white" opacity="0.0">IPNU</text>
+</svg>

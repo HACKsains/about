@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <defs>
+    <linearGradient id="gmg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1D3B5E"/>
+      <stop offset="100%" stop-color="#0D7A87"/>
+    </linearGradient>
+  </defs>
+  <!-- Round background -->
+  <circle cx="24" cy="24" r="22" fill="url(#gmg)"/>
+  <!-- Simplified elephant head silhouette -->
+  <!-- Head -->
+  <ellipse cx="24" cy="20" rx="11" ry="10" fill="white" opacity="0.9"/>
+  <!-- Ears -->
+  <ellipse cx="13" cy="20" rx="5" ry="7" fill="white" opacity="0.7"/>
+  <ellipse cx="35" cy="20" rx="5" ry="7" fill="white" opacity="0.7"/>
+  <ellipse cx="13" cy="20" rx="3" ry="5" fill="#0D7A87" opacity="0.5"/>
+  <ellipse cx="35" cy="20" rx="3" ry="5" fill="#0D7A87" opacity="0.5"/>
+  <!-- Trunk -->
+  <path d="M24,29 Q20,33 19,38 Q22,40 23,37 Q24,34 24,30" fill="white" opacity="0.9"/>
+  <!-- Eyes -->
+  <circle cx="20" cy="18" r="2" fill="#1D3B5E"/>
+  <circle cx="28" cy="18" r="2" fill="#1D3B5E"/>
+  <circle cx="20.7" cy="17.3" r="0.8" fill="white"/>
+  <circle cx="28.7" cy="17.3" r="0.8" fill="white"/>
+  <!-- Tusks -->
+  <path d="M20,26 Q16,31 15,34" stroke="#52B2DC" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.9"/>
+  <path d="M28,26 Q32,31 33,34" stroke="#52B2DC" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.9"/>
+  <!-- GM text -->
+  <text x="24" y="45" text-anchor="middle" font-family="sans-serif" font-weight="bold" font-size="5" fill="white" letter-spacing="1">GM</text>
+</svg>

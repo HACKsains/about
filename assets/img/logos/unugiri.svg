@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <defs>
+    <linearGradient id="ng" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1D3B5E"/>
+      <stop offset="100%" stop-color="#0D7A87"/>
+    </linearGradient>
+  </defs>
+  <!-- Circle background -->
+  <circle cx="24" cy="24" r="22" fill="url(#ng)"/>
+  <!-- Crescent moon (two circles) -->
+  <circle cx="22" cy="17" r="8" fill="white" opacity="0.95"/>
+  <circle cx="25" cy="14" r="6.5" fill="#1D3B5E"/>
+  <!-- Star -->
+  <polygon points="34,10 35.2,13.5 39,13.5 36.1,15.8 37.3,19.3 34,17.1 30.7,19.3 31.9,15.8 29,13.5 32.8,13.5" fill="white" opacity="0.95"/>
+  <!-- Book motif at bottom -->
+  <rect x="12" y="30" width="24" height="12" rx="2" fill="white" opacity="0.15"/>
+  <line x1="24" y1="30" x2="24" y2="42" stroke="white" stroke-width="1.5" opacity="0.5"/>
+  <!-- NU text -->
+  <text x="24" y="41" text-anchor="middle" font-family="sans-serif" font-weight="bold" font-size="8" fill="white" letter-spacing="1">NU</text>
+</svg>

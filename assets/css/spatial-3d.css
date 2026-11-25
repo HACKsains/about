@@ -1,0 +1,1207 @@
+/* ==========================================================================
+   assets/css/spatial-3d.css
+   TRUE 3D SPATIAL CV & PORTFOLIO ENGINE — Syahriel Andika (ILMUNA Digital)
+   Pure White Studio · Navy #1D3B5E · Teal #0D7A87 · Sky #52B2DC
+   ========================================================================== */
+
+:root {
+  --navy:        #1D3B5E;
+  --navy-deep:   #10243C;
+  --teal:        #0D7A87;
+  --teal-bright: #1499A8;
+  --sky:         #52B2DC;
+  --white:       #FFFFFF;
+  --studio-bg:   #F8FAFC;
+  --slate-100:   #F1F5F9;
+  --slate-200:   #E2E8F0;
+  --slate-300:   #CBD5E1;
+  --slate-600:   #475569;
+  --slate-800:   #1E293B;
+  --mouse-x:     0.5;
+  --mouse-y:     0.5;
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ── 1. BASE & TYPOGRAPHY ───────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  background-color: var(--white);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: radial-gradient(circle at 12% 10%, rgba(82, 178, 220, 0.09) 0%, transparent 42%),
+              radial-gradient(circle at 88% 22%, rgba(13, 122, 135, 0.08) 0%, transparent 45%),
+              radial-gradient(circle at 50% 78%, rgba(29, 59, 94, 0.06) 0%, transparent 50%),
+              #FFFFFF;
+  color: var(--slate-800);
+  overflow-x: hidden;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ── 2. STRICT ANTI-DOWNLOAD PROTECTION (NO NON-STANDARD WARNINGS) ──────── */
+img,
+.no-download,
+[data-img] img,
+.cert-card-item img,
+#lb-img,
+.portrait-frame img,
+.badge-3d img,
+.logo-emblem img,
+.folder-3d-sheet img {
+  -webkit-user-drag:     none !important;
+  -webkit-touch-callout: none !important;
+  user-select:           none !important;
+  -webkit-user-select:   none !important;
+  -moz-user-select:      none !important;
+  pointer-events:        none !important;
+}
+
+/* Invisible click-through anti-save overlay over protected images */
+.img-shield {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+a, button, input, [data-cert-open], [data-sk-open], .folder-3d, .card-3d,
+[data-tilt-3d], [data-copy], #lightbox-close, .mobile-dock-btn, .nav-link-item {
+  pointer-events: auto !important;
+}
+
+/* ── 3. THREE.JS WEBGL 3D CANVAS & AMBIENT STUDIO DEPTH ─────────────────── */
+#three-spatial-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.studio-grid-plane {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(29, 59, 94, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(29, 59, 94, 0.035) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse 85% 75% at 50% 40%, #000 30%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 85% 75% at 50% 40%, #000 30%, transparent 100%);
+}
+
+/* ── 4. TOP PROGRESS BAR & FLOATING 3D GLASS NAVBAR ─────────────────────── */
+.scroll-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3.5px;
+  width: 0%;
+  background: linear-gradient(90deg, #1D3B5E, #0D7A87, #52B2DC, #0D7A87);
+  background-size: 200% 100%;
+  animation: gradientShift 5s ease infinite;
+  z-index: 100001;
+  box-shadow: 0 0 14px rgba(13, 122, 135, 0.55);
+}
+
+.navbar-3d {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(1240px, calc(100% - 24px));
+  z-index: 10000;
+  background: rgba(255, 255, 255, 0.84);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 22px;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 1) inset,
+    0 4px 0 rgba(203, 213, 225, 0.55),
+    0 14px 36px -8px rgba(29, 59, 94, 0.14);
+  transition: all 0.35s var(--ease-spring);
+}
+
+.navbar-3d.scrolled {
+  top: 8px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 1) inset,
+    0 4px 0 rgba(148, 163, 184, 0.45),
+    0 20px 45px -10px rgba(29, 59, 94, 0.2);
+}
+
+.nav-link-item {
+  font-size: 12px;
+  font-weight: 700;
+  color: #475569;
+  padding: 7px 14px;
+  border-radius: 9999px;
+  transition: all 0.25s var(--ease-spring);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.nav-link-item:hover,
+.nav-link-item.active {
+  color: var(--teal);
+  background: #FFFFFF;
+  box-shadow: 0 3px 10px rgba(13, 122, 135, 0.14), 0 1px 0 rgba(255,255,255,1) inset;
+  transform: translateY(-1px);
+}
+
+/* ── 5. 3D KINETIC TEXT & GRADIENT ACCENTS ──────────────────────────────── */
+.text-navy { color: var(--navy); }
+.text-teal { color: var(--teal); }
+.text-sky  { color: var(--sky); }
+
+.gradient-text-3d {
+  background: linear-gradient(135deg, #1D3B5E 0%, #0D7A87 48%, #52B2DC 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 6px 14px rgba(13, 122, 135, 0.2));
+}
+
+.headline-3d {
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.9),
+    0 3px 0 rgba(203, 213, 225, 0.7),
+    0 10px 25px rgba(29, 59, 94, 0.12);
+}
+
+.section-pill-3d {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 100%);
+  border: 1px solid rgba(203, 213, 225, 0.9);
+  box-shadow:
+    0 1px 0 #FFFFFF inset,
+    0 3px 0 #CBD5E1,
+    0 8px 18px rgba(29, 59, 94, 0.08);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+
+/* ── 6. TRUE TACTILE 3D PUSH BUTTONS ────────────────────────────────────── */
+.btn-3d-primary {
+  background: linear-gradient(135deg, #1D3B5E 0%, #0D7A87 58%, #259BB8 100%);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 14px;
+  padding: 12px 24px;
+  font-weight: 800;
+  font-size: 13.5px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.35) inset,
+    0 5px 0 #10243C,
+    0 12px 26px rgba(29, 59, 94, 0.28);
+  transition: transform 0.2s var(--ease-spring), box-shadow 0.2s var(--ease-spring), filter 0.2s ease;
+}
+
+.btn-3d-primary:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.06);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.4) inset,
+    0 7px 0 #10243C,
+    0 18px 34px rgba(13, 122, 135, 0.34);
+  color: #FFFFFF;
+}
+
+.btn-3d-primary:active {
+  transform: translateY(3px);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.25) inset,
+    0 2px 0 #10243C,
+    0 6px 14px rgba(29, 59, 94, 0.22);
+}
+
+.btn-3d-white {
+  background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+  color: var(--navy);
+  border: 1.5px solid #CBD5E1;
+  border-radius: 14px;
+  padding: 11px 22px;
+  font-weight: 800;
+  font-size: 13.5px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  box-shadow:
+    0 1px 0 #FFFFFF inset,
+    0 5px 0 #CBD5E1,
+    0 10px 22px rgba(29, 59, 94, 0.08);
+  transition: transform 0.2s var(--ease-spring), box-shadow 0.2s var(--ease-spring), border-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-3d-white:hover {
+  transform: translateY(-2px);
+  border-color: var(--teal);
+  color: var(--teal);
+  box-shadow:
+    0 1px 0 #FFFFFF inset,
+    0 7px 0 #0D7A87,
+    0 16px 30px rgba(13, 122, 135, 0.16);
+}
+
+.btn-3d-white:active {
+  transform: translateY(3px);
+  box-shadow:
+    0 1px 0 #FFFFFF inset,
+    0 2px 0 #0D7A87,
+    0 5px 12px rgba(13, 122, 135, 0.12);
+}
+
+/* ── 7. TRUE MULTI-LAYER 3D EXTRUDED CARDS ──────────────────────────────── */
+.card-3d {
+  background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.96) 100%);
+  border-radius: 22px;
+  border: 1px solid rgba(203, 213, 225, 0.85);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 1) inset,
+    0 -2px 0 rgba(29, 59, 94, 0.04) inset,
+    0 6px 0 #DCE5F0,
+    0 18px 40px -10px rgba(29, 59, 94, 0.12);
+  position: relative;
+  transform-style: preserve-3d;
+  transition: box-shadow 0.35s var(--ease-spring), border-color 0.3s ease;
+  will-change: transform;
+}
+
+.card-3d:hover {
+  border-color: rgba(13, 122, 135, 0.42);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 1) inset,
+    0 10px 0 #CBD5E1,
+    0 28px 60px -12px rgba(29, 59, 94, 0.22),
+    0 0 0 1px rgba(82, 178, 220, 0.22);
+}
+
+/* Specular light glare sweeping across 3D cards on mouse move */
+.card-3d .card-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background: radial-gradient(
+    circle 260px at var(--gx, 50%) var(--gy, 50%),
+    rgba(82, 178, 220, 0.22) 0%,
+    rgba(255, 255, 255, 0.16) 35%,
+    transparent 70%
+  );
+}
+
+.card-3d:hover .card-glare {
+  opacity: 1;
+}
+
+/* Z-Space depth layers inside 3D tilt cards */
+.z-layer-1 { transform: translateZ(16px); }
+.z-layer-2 { transform: translateZ(30px); }
+.z-layer-3 { transform: translateZ(48px); }
+
+/* ── 8. 3D HERO PORTRAIT STAGE & ORBITING BADGES ────────────────────────── */
+.hero-3d-stage {
+  position: relative;
+  perspective: 1300px;
+  transform-style: preserve-3d;
+}
+
+.hero-orbit-ring {
+  position: absolute;
+  inset: -26px;
+  border-radius: 38px;
+  border: 1.5px dashed rgba(13, 122, 135, 0.24);
+  pointer-events: none;
+  transform: translateZ(-30px) rotate(-4deg);
+  animation: orbitSway 9s ease-in-out infinite;
+}
+
+.hero-orbit-ring-2 {
+  position: absolute;
+  inset: -44px;
+  border-radius: 46px;
+  border: 1px solid rgba(82, 178, 220, 0.18);
+  pointer-events: none;
+  transform: translateZ(-55px) rotate(5deg);
+  animation: orbitSway 12s ease-in-out infinite reverse;
+}
+
+.portrait-3d-slab {
+  border-radius: 28px;
+  overflow: visible;
+  border: 3px solid transparent;
+  background:
+    linear-gradient(#FFFFFF, #FFFFFF) padding-box,
+    linear-gradient(135deg, #1D3B5E, #0D7A87, #52B2DC) border-box;
+  box-shadow:
+    0 10px 0 rgba(29, 59, 94, 0.16),
+    0 30px 70px -12px rgba(29, 59, 94, 0.28);
+  transform-style: preserve-3d;
+}
+
+.badge-3d {
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(203, 213, 225, 0.9);
+  border-radius: 9999px;
+  padding: 9px 16px;
+  box-shadow:
+    0 1px 0 #FFFFFF inset,
+    0 4px 0 #CBD5E1,
+    0 14px 30px rgba(29, 59, 94, 0.18);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--navy);
+  white-space: nowrap;
+  transform: translateZ(65px);
+  transition: transform 0.35s var(--ease-spring), box-shadow 0.35s ease;
+}
+
+.hero-badge-top {
+  position: absolute;
+  top: -16px;
+  right: -22px;
+  z-index: 25;
+  animation: float3D 4.5s ease-in-out infinite;
+}
+
+.hero-badge-mid {
+  position: absolute;
+  bottom: 92px;
+  left: -30px;
+  z-index: 25;
+  animation: float3D 5.2s ease-in-out infinite 0.7s;
+}
+
+.hero-badge-bot {
+  position: absolute;
+  bottom: -16px;
+  right: -18px;
+  z-index: 25;
+  animation: float3D 4.8s ease-in-out infinite 1.4s;
+}
+
+/* 3D Metric Cubes in Hero */
+.stat-cube-3d {
+  background: linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 100%);
+  border: 1px solid rgba(203, 213, 225, 0.85);
+  border-radius: 18px;
+  padding: 14px 16px;
+  box-shadow:
+    0 1px 0 #FFFFFF inset,
+    0 5px 0 #D6E0EC,
+    0 12px 24px rgba(29, 59, 94, 0.08);
+  transition: transform 0.3s var(--ease-spring), box-shadow 0.3s ease;
+}
+
+.stat-cube-3d:hover {
+  transform: translateY(-4px) rotateX(6deg);
+  box-shadow:
+    0 1px 0 #FFFFFF inset,
+    0 8px 0 #0D7A87,
+    0 20px 34px rgba(13, 122, 135, 0.18);
+}
+
+/* ── 9. LOGO EMBLEMS (SQUARE & WIDE WORDMARK SUPPORT) ───────────────────── */
+.logo-emblem {
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  box-shadow:
+    0 1px 0 #FFFFFF inset,
+    0 4px 0 #CBD5E1,
+    0 8px 18px rgba(29, 59, 94, 0.1);
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  flex-shrink: 0;
+  transform: translateZ(24px);
+}
+
+.logo-emblem img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* Wide Logo Showcase Stage for Website Cards (Usman Roin, learn.ILMUNA, ILMUNA Digital) */
+.web-logo-stage {
+  position: relative;
+  height: 112px;
+  border-radius: 16px;
+  background: radial-gradient(circle at 50% 35%, #FFFFFF 0%, #F1F5F9 100%);
+  border: 1px solid rgba(203, 213, 225, 0.8);
+  box-shadow:
+    0 2px 10px rgba(29, 59, 94, 0.06) inset,
+    0 8px 20px -8px rgba(29, 59, 94, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px 24px;
+  overflow: hidden;
+  transform: translateZ(22px);
+}
+
+.web-logo-stage img.logo-wide {
+  max-height: 62px;
+  max-width: 88%;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 12px rgba(29, 59, 94, 0.14));
+  transition: transform 0.45s var(--ease-spring);
+}
+
+.web-logo-stage img.logo-square {
+  max-height: 78px;
+  max-width: 78px;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 12px rgba(29, 59, 94, 0.16));
+  transition: transform 0.45s var(--ease-spring);
+}
+
+.card-3d:hover .web-logo-stage img {
+  transform: scale(1.08) translateY(-3px);
+}
+
+/* ── 10. 3D KADERISASI ASCENDING DEPTH TIMELINE ─────────────────────────── */
+.kader-rail {
+  position: relative;
+  padding-left: 30px;
+}
+
+.kader-rail::before {
+  content: '';
+  position: absolute;
+  left: 11px;
+  top: 18px;
+  bottom: 18px;
+  width: 4px;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, #52B2DC 0%, #0D7A87 50%, #1D3B5E 100%);
+  box-shadow: 0 0 14px rgba(13, 122, 135, 0.35);
+}
+
+.kader-node-dot {
+  position: absolute;
+  left: -26px;
+  top: 24px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0D7A87, #1D3B5E);
+  border: 3px solid #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(13, 122, 135, 0.25), 0 4px 10px rgba(29, 59, 94, 0.25);
+  z-index: 4;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   11. SHOWSTOPPER: TRUE 3D PHYSICAL INTERACTIVE FOLDER SYSTEM
+       Used for BOTH Website Projects (#proyek) AND Certificates (#sertifikat)
+   ══════════════════════════════════════════════════════════════════════════ */
+.folder-3d {
+  position: relative;
+  perspective: 1100px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 24px 6px 14px;
+  text-align: left;
+  width: 100%;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.folder-3d-shell {
+  position: relative;
+  width: 100%;
+  height: 208px;
+  transform-style: preserve-3d;
+  transition: transform 0.45s var(--ease-spring);
+}
+
+/* Ground desk shadow */
+.folder-3d-floor {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: -12px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(29, 59, 94, 0.26) 0%, transparent 72%);
+  transform: rotateX(75deg) translateZ(-12px);
+  transition: transform 0.45s var(--ease-spring), opacity 0.45s ease;
+  pointer-events: none;
+}
+
+/* Folder Back Plate + Physical Tab */
+.folder-3d-back {
+  position: absolute;
+  inset: 0;
+  border-radius: 4px 20px 20px 20px;
+  background: var(--f-back, linear-gradient(145deg, #1D3B5E 0%, #10243C 100%));
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.3) inset,
+    0 14px 28px -8px rgba(15, 23, 42, 0.28);
+  transform: translateZ(0px);
+}
+
+/* Physical Folder Tab sticking out top-left */
+.folder-3d-tab {
+  position: absolute;
+  top: -22px;
+  left: 0;
+  height: 25px;
+  min-width: 104px;
+  padding: 0 18px 0 14px;
+  border-radius: 12px 14px 0 0;
+  background: var(--f-tab, linear-gradient(135deg, #1D3B5E 0%, #244C78 100%));
+  color: rgba(255, 255, 255, 0.96);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.35) inset;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 100%, 0 100%);
+}
+
+/* 3D Inner Preview Sheets peeking out from inside the folder */
+.folder-3d-sheets {
+  position: absolute;
+  inset: 14px 16px 26px 16px;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+
+.folder-3d-sheet {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  width: 68%;
+  height: 98px;
+  margin-left: -34%;
+  border-radius: 10px;
+  background: #FFFFFF;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.22);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.52s var(--ease-bounce), box-shadow 0.45s ease;
+}
+
+.folder-3d-sheet img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.folder-3d-sheet.sheet-logo {
+  padding: 10px;
+  background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+}
+
+.folder-3d-sheet.sheet-logo img {
+  object-fit: contain;
+  object-position: center;
+}
+
+/* Resting stacked fan positions inside folder */
+.folder-3d-sheet.s1 {
+  transform: translateX(-18px) translateY(-4px) rotateZ(-7deg) translateZ(6px);
+}
+.folder-3d-sheet.s2 {
+  transform: translateX(0px) translateY(-10px) rotateZ(0deg) translateZ(11px);
+}
+.folder-3d-sheet.s3 {
+  transform: translateX(18px) translateY(-4px) rotateZ(7deg) translateZ(16px);
+}
+
+/* Hinged Front Cover Flap of the 3D Folder */
+.folder-3d-front {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 164px;
+  border-radius: 16px 16px 20px 20px;
+  background: var(--f-front, linear-gradient(160deg, #27517E 0%, #1D3B5E 65%, #122945 100%));
+  border-top: 1.5px solid rgba(255, 255, 255, 0.5);
+  border-left: 1px solid rgba(255, 255, 255, 0.28);
+  border-right: 1px solid rgba(0, 0, 0, 0.14);
+  border-bottom: 4px solid rgba(0, 0, 0, 0.22);
+  padding: 16px 18px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transform-origin: bottom center;
+  transform: translateZ(24px) rotateX(-8deg);
+  transition: transform 0.52s var(--ease-spring), box-shadow 0.45s ease;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.45) inset,
+    0 18px 34px -8px rgba(15, 23, 42, 0.34);
+  overflow: hidden;
+}
+
+/* Glossy diagonal sheen across folder cover */
+.folder-3d-front::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -40%;
+  width: 90%;
+  height: 100%;
+  background: linear-gradient(115deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.04) 45%, transparent 60%);
+  pointer-events: none;
+  transition: transform 0.6s var(--ease-spring);
+}
+
+/* Tactile grip notch on top center of folder front */
+.folder-3d-front::after {
+  content: '';
+  position: absolute;
+  top: 7px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36px;
+  height: 3.5px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.38);
+}
+
+/* HOVER STATE: Folder lifts, front flap swings open in 3D, sheets fan out! */
+.folder-3d:hover .folder-3d-shell {
+  transform: translateY(-10px) rotateX(6deg);
+}
+
+.folder-3d:hover .folder-3d-front {
+  transform: translateZ(26px) rotateX(-32deg);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.55) inset,
+    0 26px 42px -6px rgba(15, 23, 42, 0.38);
+}
+
+.folder-3d:hover .folder-3d-front::before {
+  transform: translateX(35%);
+}
+
+.folder-3d:hover .folder-3d-sheet.s1 {
+  transform: translateX(-34px) translateY(-34px) rotateZ(-14deg) scale(1.03) translateZ(10px);
+}
+.folder-3d:hover .folder-3d-sheet.s2 {
+  transform: translateX(0px) translateY(-48px) rotateZ(0deg) scale(1.08) translateZ(16px);
+}
+.folder-3d:hover .folder-3d-sheet.s3 {
+  transform: translateX(34px) translateY(-34px) rotateZ(14deg) scale(1.03) translateZ(20px);
+}
+
+.folder-3d:hover .folder-3d-floor {
+  transform: rotateX(75deg) scale(1.12) translateZ(-18px);
+  opacity: 0.72;
+}
+
+/* OPEN / ACTIVE STATE when clicked */
+.folder-3d.is-open .folder-3d-shell {
+  transform: translateY(-12px) rotateX(8deg);
+}
+
+.folder-3d.is-open .folder-3d-front {
+  transform: translateZ(28px) rotateX(-38deg);
+  box-shadow:
+    0 0 0 2.5px rgba(255, 255, 255, 0.85),
+    0 0 0 6px var(--f-glow, rgba(13, 122, 135, 0.38)),
+    0 28px 46px -6px rgba(15, 23, 42, 0.42);
+}
+
+.folder-3d.is-open .folder-3d-sheet.s1 {
+  transform: translateX(-36px) translateY(-38px) rotateZ(-15deg) scale(1.04) translateZ(10px);
+}
+.folder-3d.is-open .folder-3d-sheet.s2 {
+  transform: translateX(0px) translateY(-54px) rotateZ(0deg) scale(1.1) translateZ(16px);
+}
+.folder-3d.is-open .folder-3d-sheet.s3 {
+  transform: translateX(36px) translateY(-38px) rotateZ(15deg) scale(1.04) translateZ(20px);
+}
+
+/* Folder Color Palettes */
+.folder-accent-navy {
+  --f-back:  linear-gradient(145deg, #162E4D 0%, #0D1E33 100%);
+  --f-tab:   linear-gradient(135deg, #214570 0%, #162E4D 100%);
+  --f-front: linear-gradient(155deg, #28558A 0%, #1D3B5E 58%, #112640 100%);
+  --f-glow:  rgba(29, 59, 94, 0.45);
+}
+.folder-accent-teal {
+  --f-back:  linear-gradient(145deg, #095C66 0%, #063F47 100%);
+  --f-tab:   linear-gradient(135deg, #0E8492 0%, #095C66 100%);
+  --f-front: linear-gradient(155deg, #13A2B3 0%, #0D7A87 58%, #074F58 100%);
+  --f-glow:  rgba(13, 122, 135, 0.45);
+}
+.folder-accent-sky {
+  --f-back:  linear-gradient(145deg, #1E75A3 0%, #135073 100%);
+  --f-tab:   linear-gradient(135deg, #3597C9 0%, #1E75A3 100%);
+  --f-front: linear-gradient(155deg, #52B2DC 0%, #268BBF 58%, #175E85 100%);
+  --f-glow:  rgba(82, 178, 220, 0.5);
+}
+.folder-accent-rose {
+  --f-back:  linear-gradient(145deg, #881337 0%, #5B0B24 100%);
+  --f-tab:   linear-gradient(135deg, #BE123C 0%, #881337 100%);
+  --f-front: linear-gradient(155deg, #E11D48 0%, #9F1239 58%, #6B0B28 100%);
+  --f-glow:  rgba(225, 29, 72, 0.42);
+}
+.folder-accent-indigo {
+  --f-back:  linear-gradient(145deg, #312E81 0%, #1E1B4B 100%);
+  --f-tab:   linear-gradient(135deg, #4338CA 0%, #312E81 100%);
+  --f-front: linear-gradient(155deg, #4F46E5 0%, #3730A3 58%, #241F69 100%);
+  --f-glow:  rgba(79, 70, 229, 0.42);
+}
+.folder-accent-emerald {
+  --f-back:  linear-gradient(145deg, #065F46 0%, #043D2D 100%);
+  --f-tab:   linear-gradient(135deg, #047857 0%, #065F46 100%);
+  --f-front: linear-gradient(155deg, #10B981 0%, #059669 58%, #045940 100%);
+  --f-glow:  rgba(16, 185, 129, 0.42);
+}
+.folder-accent-amber {
+  --f-back:  linear-gradient(145deg, #92400E 0%, #632907 100%);
+  --f-tab:   linear-gradient(135deg, #B45309 0%, #92400E 100%);
+  --f-front: linear-gradient(155deg, #D97706 0%, #B45309 58%, #78350F 100%);
+  --f-glow:  rgba(217, 119, 6, 0.42);
+}
+.folder-accent-slate {
+  --f-back:  linear-gradient(145deg, #334155 0%, #1E293B 100%);
+  --f-tab:   linear-gradient(135deg, #475569 0%, #334155 100%);
+  --f-front: linear-gradient(155deg, #64748B 0%, #475569 58%, #293548 100%);
+  --f-glow:  rgba(100, 116, 139, 0.42);
+}
+
+.folder-count-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #FFFFFF;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.folder-open-cue {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  transition: transform 0.25s ease;
+}
+
+.folder-3d:hover .folder-open-cue {
+  transform: translateX(3px);
+}
+
+/* ── 12. 3D FOLDER VAULT DRAWER (OPENED CONTENT WINDOW) ─────────────────── */
+.folder-vault {
+  display: none;
+  margin-top: 28px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border: 1.5px solid rgba(203, 213, 225, 0.9);
+  box-shadow:
+    0 1px 0 #FFFFFF inset,
+    0 8px 0 #D8E2EE,
+    0 30px 70px -15px rgba(29, 59, 94, 0.22);
+  overflow: hidden;
+  transform-origin: top center;
+}
+
+.folder-vault.is-open {
+  display: block;
+}
+
+.vault-window-bar {
+  background: linear-gradient(180deg, #F8FAFC 0%, #EEF3F8 100%);
+  border-bottom: 1px solid #E2E8F0;
+  padding: 16px 22px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.vault-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2) inset;
+}
+
+.vault-search-input {
+  background: #FFFFFF;
+  border: 1.5px solid #CBD5E1;
+  border-radius: 12px;
+  padding: 8px 14px 8px 36px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--navy);
+  width: 240px;
+  max-width: 100%;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.vault-search-input:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(13, 122, 135, 0.14);
+}
+
+/* Browser Mockup Top Chrome inside Website Cards */
+.browser-chrome {
+  background: linear-gradient(180deg, #F8FAFC 0%, #EBF1F6 100%);
+  border-radius: 14px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #E2E8F0;
+}
+
+/* ── 13. 3D LIGHTBOX MODAL (MULTI-PAGE SK + PREV/NEXT GALLERY) ──────────── */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99990;
+  background: rgba(15, 23, 42, 0.78);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.lightbox-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.lightbox-card {
+  background: #FFFFFF;
+  border-radius: 26px;
+  padding: 22px;
+  max-width: 880px;
+  width: 100%;
+  max-height: 92vh;
+  overflow-y: auto;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow:
+    0 8px 0 rgba(203, 213, 225, 0.5),
+    0 35px 90px rgba(0, 0, 0, 0.45);
+  transform: perspective(1000px) rotateX(10deg) scale(0.9) translateY(24px);
+  transition: transform 0.4s var(--ease-spring);
+}
+
+.lightbox-overlay.active .lightbox-card {
+  transform: perspective(1000px) rotateX(0deg) scale(1) translateY(0);
+}
+
+.lb-page-btn {
+  padding: 5px 12px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 800;
+  font-family: 'JetBrains Mono', monospace;
+  border: 1.5px solid #CBD5E1;
+  background: #FFFFFF;
+  color: var(--navy);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lb-page-btn.active,
+.lb-page-btn:hover {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: #FFFFFF;
+}
+
+/* ── 14. TOAST & SPATIAL CURSOR RING ────────────────────────────────────── */
+.toast {
+  position: fixed;
+  bottom: 88px;
+  right: 22px;
+  z-index: 100000;
+  background: linear-gradient(135deg, #1D3B5E, #0D7A87);
+  color: #FFFFFF;
+  padding: 12px 22px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 10px 30px rgba(29, 59, 94, 0.35);
+  transform: translateY(80px) scale(0.94);
+  opacity: 0;
+  transition: all 0.32s var(--ease-spring);
+  pointer-events: none;
+}
+
+.toast.show {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.spatial-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 30px;
+  border: 2px solid rgba(13, 122, 135, 0.55);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 999999;
+  transform: translate(-50%, -50%);
+  transition: width 0.22s ease, height 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+  box-shadow: 0 0 18px rgba(82, 178, 220, 0.35);
+  will-change: transform;
+}
+
+.spatial-cursor.hovering {
+  width: 52px;
+  height: 52px;
+  border-color: var(--teal);
+  background: rgba(13, 122, 135, 0.08);
+  box-shadow: 0 0 28px rgba(13, 122, 135, 0.4);
+}
+
+.spatial-cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  background: var(--teal);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1000000;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+}
+
+/* ── 15. MOBILE FLOATING 3D DOCK ────────────────────────────────────────── */
+.mobile-dock {
+  position: fixed;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9990;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(203, 213, 225, 0.9);
+  border-radius: 9999px;
+  box-shadow:
+    0 1px 0 #FFFFFF inset,
+    0 4px 0 rgba(203, 213, 225, 0.65),
+    0 14px 34px rgba(29, 59, 94, 0.22);
+  padding: 5px 8px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  max-width: 96vw;
+}
+
+.mobile-dock-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 9999px;
+  font-size: 9.5px;
+  font-weight: 800;
+  color: #64748B;
+  transition: all 0.25s var(--ease-spring);
+  text-decoration: none;
+  min-width: 52px;
+}
+
+.mobile-dock-btn.active {
+  color: var(--teal);
+  background: rgba(13, 122, 135, 0.12);
+  transform: translateY(-2px);
+}
+
+.mobile-dock-btn svg {
+  width: 17px;
+  height: 17px;
+  margin-bottom: 2px;
+}
+
+/* ── 16. LENIS & CUSTOM SCROLLBAR ───────────────────────────────────────── */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+::-webkit-scrollbar { width: 9px; }
+::-webkit-scrollbar-track { background: #F1F5F9; border-left: 1px solid #E2E8F0; }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #1D3B5E 0%, #0D7A87 50%, #52B2DC 100%);
+  border-radius: 9999px;
+  border: 2px solid #F1F5F9;
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── 17. SECTION 3D PERSPECTIVE & KEYFRAMES ─────────────────────────────── */
+#profil, #cv-ringkasan, #organisasi, #proyek, #sertifikat, #kontak {
+  perspective: 1400px;
+}
+
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes float3D {
+  0%, 100% { transform: translateZ(65px) translateY(0px); }
+  50%      { transform: translateZ(75px) translateY(-9px); }
+}
+
+@keyframes orbitSway {
+  0%, 100% { transform: translateZ(-35px) rotate(-4deg) scale(1); }
+  50%      { transform: translateZ(-25px) rotate(3deg) scale(1.02); }
+}
+
+@keyframes pulseSoft {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.45; transform: scale(1.45); }
+}
+
+.live-pulse-dot {
+  animation: pulseSoft 1.8s ease-in-out infinite;
+}
+
+/* ── 18. RESPONSIVE MOBILE POLISH ───────────────────────────────────────── */
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 78px;
+  }
+  .navbar-3d {
+    top: 8px;
+    width: calc(100% - 16px);
+    border-radius: 18px;
+  }
+  .folder-3d-shell {
+    height: 192px;
+  }
+  .folder-3d-front {
+    height: 150px;
+    padding: 14px 15px 12px;
+  }
+  .folder-3d-sheet {
+    height: 86px;
+  }
+  .vault-search-input {
+    width: 100%;
+  }
+  .toast {
+    bottom: 82px;
+    left: 14px;
+    right: 14px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-badge-top {
+    top: -10px;
+    right: -4px;
+    animation: none;
+    transform: none;
+  }
+  .hero-badge-mid {
+    bottom: 82px;
+    left: -6px;
+    animation: none;
+    transform: none;
+  }
+  .hero-badge-bot {
+    bottom: -10px;
+    right: -4px;
+    animation: none;
+    transform: none;
+  }
+  .badge-3d {
+    font-size: 11px;
+    padding: 6px 11px;
+    gap: 6px;
+  }
+  .spatial-cursor,
+  .spatial-cursor-dot {
+    display: none !important;
+  }
+  .hero-orbit-ring,
+  .hero-orbit-ring-2 {
+    inset: -12px;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .spatial-cursor,
+  .spatial-cursor-dot {
+    display: none !important;
+  }
+}

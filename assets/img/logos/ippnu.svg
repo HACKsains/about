@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <defs>
+    <linearGradient id="ipg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1D3B5E"/>
+      <stop offset="100%" stop-color="#52B2DC"/>
+    </linearGradient>
+  </defs>
+  <!-- Circular background -->
+  <circle cx="24" cy="24" r="22" fill="url(#ipg)"/>
+  <!-- 8-petal flower -->
+  <ellipse cx="24" cy="14" rx="3.5" ry="6" fill="white" opacity="0.85"/>
+  <ellipse cx="24" cy="34" rx="3.5" ry="6" fill="white" opacity="0.85"/>
+  <ellipse cx="14" cy="24" rx="6" ry="3.5" fill="white" opacity="0.85"/>
+  <ellipse cx="34" cy="24" rx="6" ry="3.5" fill="white" opacity="0.85"/>
+  <!-- Diagonal petals -->
+  <ellipse cx="17" cy="17" rx="3.5" ry="6" fill="white" opacity="0.7" transform="rotate(45 17 17)"/>
+  <ellipse cx="31" cy="17" rx="3.5" ry="6" fill="white" opacity="0.7" transform="rotate(-45 31 17)"/>
+  <ellipse cx="17" cy="31" rx="3.5" ry="6" fill="white" opacity="0.7" transform="rotate(-45 17 31)"/>
+  <ellipse cx="31" cy="31" rx="3.5" ry="6" fill="white" opacity="0.7" transform="rotate(45 31 31)"/>
+  <!-- Center circle -->
+  <circle cx="24" cy="24" r="6" fill="#F472B6" opacity="0.9"/>
+  <circle cx="24" cy="24" r="3.5" fill="white"/>
+</svg>
