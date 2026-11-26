@@ -180,6 +180,21 @@ a, button, input, [data-cert-open], [data-sk-open], .folder-3d, .card-3d,
     0 1px 0 rgba(255, 255, 255, 0.9),
     0 3px 0 rgba(203, 213, 225, 0.7),
     0 10px 25px rgba(29, 59, 94, 0.12);
+  perspective: 900px;
+}
+
+/* Anime.js Kinetic 3D Split-Letter Styling */
+.kinetic-char {
+  display: inline-block;
+  transform-origin: 50% 80%;
+  will-change: transform, opacity;
+}
+
+.gradient-text-3d .kinetic-char {
+  background: linear-gradient(135deg, #1D3B5E 0%, #0D7A87 48%, #52B2DC 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .section-pill-3d {
@@ -502,35 +517,82 @@ a, button, input, [data-cert-open], [data-sk-open], .folder-3d, .card-3d,
   transform: scale(1.08) translateY(-3px);
 }
 
-/* ── 10. 3D KADERISASI ASCENDING DEPTH TIMELINE ─────────────────────────── */
-.kader-rail {
+/* ── 10. 3D KADERISASI HORIZONTAL TIMELINE ────────────────────────────────── */
+.kader-timeline-wrap {
   position: relative;
-  padding-left: 30px;
+  overflow-x: auto;
+  padding: 12px 4px 16px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
 }
 
-.kader-rail::before {
+.kader-rail-h {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(230px, 1fr));
+  gap: 20px;
+  min-width: 1120px;
+  padding-top: 8px;
+}
+
+@media (min-width: 1180px) {
+  .kader-timeline-wrap {
+    overflow-x: visible;
+    padding: 12px 0 8px;
+  }
+  .kader-rail-h {
+    min-width: 0;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+/* Continuous 3D glowing horizontal timeline bar across all 5 levels */
+.kader-rail-h::before {
   content: '';
   position: absolute;
-  left: 11px;
-  top: 18px;
-  bottom: 18px;
-  width: 4px;
+  top: 23px;
+  left: 9%;
+  right: 9%;
+  height: 4px;
   border-radius: 9999px;
-  background: linear-gradient(180deg, #52B2DC 0%, #0D7A87 50%, #1D3B5E 100%);
-  box-shadow: 0 0 14px rgba(13, 122, 135, 0.35);
+  background: linear-gradient(90deg, #52B2DC 0%, #0D7A87 50%, #1D3B5E 100%);
+  box-shadow: 0 0 16px rgba(13, 122, 135, 0.4);
+  z-index: 1;
 }
 
+.kader-step-col {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  scroll-snap-align: start;
+}
+
+/* Glowing 3D orb sitting directly on the horizontal timeline bar */
 .kader-node-dot {
-  position: absolute;
-  left: -26px;
-  top: 24px;
-  width: 18px;
-  height: 18px;
+  position: relative;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   background: linear-gradient(135deg, #0D7A87, #1D3B5E);
-  border: 3px solid #FFFFFF;
-  box-shadow: 0 0 0 3px rgba(13, 122, 135, 0.25), 0 4px 10px rgba(29, 59, 94, 0.25);
+  border: 3.5px solid #FFFFFF;
+  color: #FFFFFF;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 0 4px rgba(13, 122, 135, 0.22), 0 6px 14px rgba(29, 59, 94, 0.28);
   z-index: 4;
+}
+
+/* Short vertical 3D connector stem from timeline orb to card */
+.kader-stem {
+  width: 2.5px;
+  height: 18px;
+  background: linear-gradient(180deg, #0D7A87 0%, rgba(13, 122, 135, 0.2) 100%);
+  border-radius: 9999px;
 }
 
 /* ══════════════════════════════════════════════════════════════════════════

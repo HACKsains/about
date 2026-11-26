@@ -1,15 +1,15 @@
 /**
  * ═══════════════════════════════════════════════════════════════════════════
- *  ILMUNA DIGITAL — TRUE 3D SPATIAL ENGINE v4.0
+ *  ILMUNA DIGITAL — 5-ENGINE 3D SPATIAL MOTION SUITE v5.0
  *  File: assets/js/spatial-engine.js
- *  Features:
- *   1. Real Three.js WebGL 3D Sculptural Background (Scroll + Mouse Reactive)
- *   2. Lenis Momentum Smooth Scroll + GSAP ScrollTrigger Bidirectional 3D Reveal
- *   3. True Multi-Layer 3D Cursor Tilt + Dynamic Specular Glare ([data-tilt-3d])
- *   4. Interactive 3D Physical Folder Engine for Websites & Certificates/SK
- *   5. Multi-Page Official SK & Prev/Next Gallery 3D Lightbox Modal
- *   6. Animated 3D Metric Counters, Spatial Cursor, Mobile Drawer & Dock
- *   7. Strict Multi-Layer Anti-Download Protection on All Images
+ *  Orchestrated Engines (Zero-Collision Architecture):
+ *   1. Lenis 1.1.18        — Inertial momentum scroll + velocity feed
+ *   2. Three.js WebGL      — Real 3D sculptural geometry + depth starfield
+ *   3. GSAP + ScrollTrigger— Bidirectional 3D scroll reveals (Down & Up) + parallax
+ *   4. Motion v12          — Real spring() physics gestures, modals, inView & scroll
+ *   5. Anime.js v3.2.2     — Kinetic 3D split-text, elastic grid staggers & SVG draw
+ *   + Interactive 3D Physical Folder Vaults (Websites & 68 Certificates/SK)
+ *   + Multi-Page Official SK Lightbox + Strict Anti-Download Security
  * ═══════════════════════════════════════════════════════════════════════════
  */
 
@@ -17,7 +17,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const isTouch = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
   const DATA = window.PORTFOLIO_DATA || { websites: [], websiteFolders: {}, certificates: [], certFolders: {} };
 
-  // ── Helper: Safe HTML Escape ─────────────────────────────────────────────
+  const hasGSAP   = typeof gsap !== 'undefined';
+  const hasST     = hasGSAP && typeof ScrollTrigger !== 'undefined';
+  const hasLenis  = typeof Lenis !== 'undefined';
+  const hasMotion = typeof Motion !== 'undefined' && typeof Motion.animate === 'function';
+  const hasAnime  = typeof anime !== 'undefined';
+
+  // Helper: Safe HTML Escape
   const esc = (str) => String(str ?? '')
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -25,25 +31,31 @@ document.addEventListener('DOMContentLoaded', () => {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 
-  // ── 1. GSAP + SCROLLTRIGGER + LENIS SMOOTH SCROLL ────────────────────────
-  if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+  // ── 1. LENIS + GSAP TICKER & SCROLLTRIGGER COUPLING ──────────────────────
+  if (hasST) {
     gsap.registerPlugin(ScrollTrigger);
   }
 
   let lenis = null;
-  if (typeof Lenis !== 'undefined') {
+  let scrollVelocity = 0;
+
+  if (hasLenis) {
     lenis = new Lenis({
       duration: 1.25,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 1.1,
-      touchMultiplier: 1.6,
+      wheelMultiplier: 1.08,
+      touchMultiplier: 1.65,
     });
     window.lenis = lenis;
 
-    if (typeof ScrollTrigger !== 'undefined') {
-      lenis.on('scroll', ScrollTrigger.update);
+    lenis.on('scroll', (e) => {
+      scrollVelocity = Math.max(-45, Math.min(45, (e && typeof e.velocity === 'number') ? e.velocity * 2.2 : 0));
+      if (hasST) ScrollTrigger.update();
+    });
+
+    if (hasGSAP) {
       gsap.ticker.add((time) => lenis.raf(time * 1000));
       gsap.ticker.lagSmoothing(0);
     } else {
@@ -53,19 +65,25 @@ document.addEventListener('DOMContentLoaded', () => {
       };
       requestAnimationFrame(raf);
     }
+  } else {
+    let lastScrollPos = window.scrollY;
+    window.addEventListener('scroll', () => {
+      const cur = window.scrollY;
+      scrollVelocity = Math.max(-40, Math.min(40, cur - lastScrollPos));
+      lastScrollPos = cur;
+    }, { passive: true });
   }
 
   const smoothScrollTo = (el, offset = -90) => {
     if (!el) return;
     if (lenis) {
-      lenis.scrollTo(el, { offset, duration: 1.1 });
+      lenis.scrollTo(el, { offset, duration: 1.15 });
     } else {
       const y = el.getBoundingClientRect().top + window.scrollY + offset;
       window.scrollTo({ top: y, behavior: 'smooth' });
     }
   };
 
-  // Smooth anchor scrolling
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
       const targetId = this.getAttribute('href');
@@ -80,19 +98,10 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ── 2. REAL THREE.JS WEBGL 3D SPATIAL BACKGROUND ─────────────────────────
-  let scrollVelocity = 0;
-  let lastScrollPos = window.scrollY;
-  window.addEventListener('scroll', () => {
-    const cur = window.scrollY;
-    scrollVelocity = Math.max(-40, Math.min(40, cur - lastScrollPos));
-    lastScrollPos = cur;
-  }, { passive: true });
-
   function initThreeSpatialScene() {
     const canvas = document.getElementById('three-spatial-canvas');
     if (!canvas) return;
 
-    // Fallback to subtle 2D 3D-projected particles if Three.js didn't load
     if (typeof THREE === 'undefined') {
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
@@ -136,9 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const camera = new THREE.PerspectiveCamera(48, window.innerWidth / window.innerHeight, 0.1, 100);
     camera.position.set(0, 0, 15);
 
-    // Studio Lighting (bright & sculptural)
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
-    scene.add(ambientLight);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.92));
 
     const dirLight1 = new THREE.DirectionalLight(0x52B2DC, 1.35);
     dirLight1.position.set(8, 10, 10);
@@ -151,45 +158,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const worldGroup = new THREE.Group();
     scene.add(worldGroup);
 
-    // Materials (translucent studio glass + wireframe edge accents)
     const matTealGlass = new THREE.MeshPhysicalMaterial({
-      color: 0x0D7A87,
-      roughness: 0.22,
-      metalness: 0.15,
-      transparent: true,
-      opacity: 0.14,
-      flatShading: true
+      color: 0x0D7A87, roughness: 0.22, metalness: 0.15, transparent: true, opacity: 0.14, flatShading: true
     });
     const matSkyGlass = new THREE.MeshPhysicalMaterial({
-      color: 0x52B2DC,
-      roughness: 0.2,
-      metalness: 0.1,
-      transparent: true,
-      opacity: 0.16,
-      flatShading: true
+      color: 0x52B2DC, roughness: 0.2, metalness: 0.1, transparent: true, opacity: 0.16, flatShading: true
     });
-    const matWireNavy = new THREE.MeshBasicMaterial({
-      color: 0x1D3B5E,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.16
-    });
-    const matWireTeal = new THREE.MeshBasicMaterial({
-      color: 0x0D7A87,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.2
-    });
-    const matWireSky = new THREE.MeshBasicMaterial({
-      color: 0x52B2DC,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.22
-    });
+    const matWireNavy = new THREE.MeshBasicMaterial({ color: 0x1D3B5E, wireframe: true, transparent: true, opacity: 0.16 });
+    const matWireTeal = new THREE.MeshBasicMaterial({ color: 0x0D7A87, wireframe: true, transparent: true, opacity: 0.2 });
+    const matWireSky  = new THREE.MeshBasicMaterial({ color: 0x52B2DC, wireframe: true, transparent: true, opacity: 0.22 });
 
     const floaters = [];
 
-    // 1. Hero Sculpted Icosahedron (top-right spatial anchor)
     const icoGroup = new THREE.Group();
     icoGroup.add(new THREE.Mesh(new THREE.IcosahedronGeometry(2.4, 0), matTealGlass));
     icoGroup.add(new THREE.Mesh(new THREE.IcosahedronGeometry(2.45, 0), matWireTeal));
@@ -197,7 +177,6 @@ document.addEventListener('DOMContentLoaded', () => {
     worldGroup.add(icoGroup);
     floaters.push({ mesh: icoGroup, baseY: 2.2, rx: 0.004, ry: 0.006, amp: 0.55, speed: 0.9, phase: 0 });
 
-    // 2. Sculpted 3D Torus Knot (left mid-depth)
     const knotGroup = new THREE.Group();
     knotGroup.add(new THREE.Mesh(new THREE.TorusKnotGeometry(1.75, 0.42, 72, 12), matSkyGlass));
     knotGroup.add(new THREE.Mesh(new THREE.TorusKnotGeometry(1.78, 0.43, 48, 8), matWireSky));
@@ -205,7 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
     worldGroup.add(knotGroup);
     floaters.push({ mesh: knotGroup, baseY: -1.6, rx: 0.003, ry: -0.005, amp: 0.65, speed: 0.75, phase: 1.5 });
 
-    // 3. Concentric 3D Orbital Gyroscope Rings (center-background)
     const ring1 = new THREE.Mesh(new THREE.TorusGeometry(4.6, 0.03, 12, 90), matWireSky);
     ring1.position.set(0.5, 0.4, -7.5);
     ring1.rotation.set(1.1, 0.4, 0);
@@ -218,7 +196,6 @@ document.addEventListener('DOMContentLoaded', () => {
     worldGroup.add(ring2);
     floaters.push({ mesh: ring2, baseY: 0.4, rx: -0.0015, ry: 0.002, amp: 0.35, speed: 0.5, phase: 0.8 });
 
-    // 4. Floating 3D Octahedrons & Glass Cubes across scroll depths
     const geoOct = new THREE.OctahedronGeometry(1.05, 0);
     const geoBox = new THREE.BoxGeometry(1.35, 1.35, 1.35);
     const accents = [
@@ -236,8 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
       g.position.set(...cfg.pos);
       worldGroup.add(g);
       floaters.push({
-        mesh: g,
-        baseY: cfg.pos[1],
+        mesh: g, baseY: cfg.pos[1],
         rx: 0.004 + (i % 3) * 0.0015,
         ry: 0.005 + ((i + 1) % 3) * 0.0015,
         amp: 0.45 + (i % 2) * 0.2,
@@ -246,7 +222,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    // 5. 3D Depth Particle Starfield (240 points in Navy/Teal/Sky)
     const count = isTouch ? 120 : 240;
     const positions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
@@ -265,18 +240,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const pGeo = new THREE.BufferGeometry();
     pGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     pGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-    const pMat = new THREE.PointsMaterial({
-      size: 0.14,
-      vertexColors: true,
-      transparent: true,
-      opacity: 0.55
-    });
-    const starfield = new THREE.Points(pGeo, pMat);
+    const starfield = new THREE.Points(pGeo, new THREE.PointsMaterial({
+      size: 0.14, vertexColors: true, transparent: true, opacity: 0.55
+    }));
     worldGroup.add(starfield);
 
-    // Mouse parallax target
-    let mouseX = 0, mouseY = 0;
-    let smoothMX = 0, smoothMY = 0;
+    let mouseX = 0, mouseY = 0, smoothMX = 0, smoothMY = 0;
     window.addEventListener('mousemove', (e) => {
       mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
       mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
@@ -289,8 +258,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const clock = new THREE.Clock();
-    function animate() {
-      requestAnimationFrame(animate);
+    function animateThree() {
+      requestAnimationFrame(animateThree);
       const t = clock.getElapsedTime();
       const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
       const scrollRatio = window.scrollY / maxScroll;
@@ -299,7 +268,6 @@ document.addEventListener('DOMContentLoaded', () => {
       smoothMY += (mouseY - smoothMY) * 0.05;
       scrollVelocity *= 0.92;
 
-      // Camera flies smoothly with mouse & scroll depth (bidirectional!)
       camera.position.x = smoothMX * 1.45;
       camera.position.y = -smoothMY * 1.0 - (scrollRatio - 0.5) * 3.8;
       camera.position.z = 15 - Math.sin(scrollRatio * Math.PI) * 2.4;
@@ -318,14 +286,237 @@ document.addEventListener('DOMContentLoaded', () => {
 
       starfield.rotation.y = t * 0.025 + scrollRatio * 0.5;
       starfield.rotation.x = Math.sin(t * 0.08) * 0.08;
-
       renderer.render(scene, camera);
     }
-    animate();
+    animateThree();
   }
   initThreeSpatialScene();
 
-  // ── 3. TRUE MULTI-LAYER 3D CURSOR TILT ENGINE ([data-tilt-3d]) ───────────
+  // ── 3. ANIME.JS — KINETIC 3D SPLIT-TEXT HERO, COUNTERS & SVG STROKE DRAW ─
+  function initAnimeHeroSuite() {
+    if (!hasAnime) return;
+
+    // A. Split Hero H1 ("Syahriel" + "Andika") into 3D kinetic letters
+    const heroH1 = document.querySelector('#profil h1');
+    if (heroH1 && !heroH1.dataset.splitDone) {
+      heroH1.dataset.splitDone = '1';
+      const splitNodeText = (node) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const text = node.textContent;
+          if (!text.trim()) return;
+          const frag = document.createDocumentFragment();
+          for (const ch of text) {
+            if (ch === ' ') {
+              frag.appendChild(document.createTextNode(' '));
+            } else {
+              const span = document.createElement('span');
+              span.className = 'kinetic-char';
+              span.textContent = ch;
+              frag.appendChild(span);
+            }
+          }
+          node.replaceWith(frag);
+        } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName !== 'BR') {
+          Array.from(node.childNodes).forEach(splitNodeText);
+        }
+      };
+      Array.from(heroH1.childNodes).forEach(splitNodeText);
+    }
+
+    // B. Master Anime.js Elastic Hero Timeline
+    const tl = anime.timeline({ autoplay: true });
+
+    tl.add({
+      targets: '#profil .section-pill-3d',
+      translateY: [-22, 0],
+      scale: [0.88, 1],
+      opacity: [0, 1],
+      duration: 680,
+      easing: 'easeOutElastic(1, .7)'
+    })
+    .add({
+      targets: '#profil .kinetic-char',
+      translateY: [48, 0],
+      rotateX: [-85, 0],
+      scale: [0.75, 1],
+      opacity: [0, 1],
+      duration: 920,
+      delay: anime.stagger(44),
+      easing: 'easeOutElastic(1, .65)',
+      complete: (anim) => {
+        anim.animatables.forEach(a => { a.target.style.transform = ''; });
+      }
+    }, '-=460')
+    .add({
+      targets: '#profil p',
+      translateY: [26, 0],
+      opacity: [0, 1],
+      duration: 680,
+      easing: 'easeOutCubic'
+    }, '-=620')
+    .add({
+      targets: '#profil .stat-cube-3d',
+      translateY: [40, 0],
+      rotateX: [24, 0],
+      scale: [0.82, 1],
+      opacity: [0, 1],
+      duration: 850,
+      delay: anime.stagger(75),
+      easing: 'easeOutElastic(1, .68)',
+      complete: (anim) => {
+        anim.animatables.forEach(a => { a.target.style.transform = ''; });
+      }
+    }, '-=480')
+    .add({
+      targets: '#profil [data-quick-open-web], #profil [data-quick-open-cert]',
+      translateY: [24, 0],
+      opacity: [0, 1],
+      duration: 640,
+      delay: anime.stagger(90),
+      easing: 'easeOutBack',
+      complete: (anim) => {
+        anim.animatables.forEach(a => { a.target.style.transform = ''; });
+      }
+    }, '-=580');
+
+    // C. Anime.js Elastic Number Roll-Up Counters
+    document.querySelectorAll('[data-counter]').forEach((el, idx) => {
+      const targetVal = parseInt(el.dataset.counter, 10) || 0;
+      const obj = { count: 0 };
+      anime({
+        targets: obj,
+        count: targetVal,
+        round: 1,
+        duration: 1550,
+        delay: 260 + idx * 110,
+        easing: 'easeOutExpo',
+        update: () => { el.textContent = obj.count; }
+      });
+    });
+
+    // D. Anime.js Hero Portrait 3D Dramatic Arrival
+    anime({
+      targets: '.hero-3d-stage',
+      translateY: [55, 0],
+      rotateY: [-18, 0],
+      scale: [0.9, 1],
+      opacity: [0, 1],
+      duration: 1150,
+      delay: 180,
+      easing: 'easeOutExpo',
+      complete: () => {
+        const stage = document.querySelector('.hero-3d-stage');
+        if (stage) stage.style.transform = '';
+      }
+    });
+
+    // E. Anime.js SVG Line-Drawing on Section Pill & Skill Icons
+    const drawablePaths = document.querySelectorAll('.section-pill-3d svg path, #cv-ringkasan svg path');
+    if (drawablePaths.length) {
+      anime({
+        targets: drawablePaths,
+        strokeDashoffset: [anime.setDashoffset, 0],
+        easing: 'easeInOutSine',
+        duration: 1200,
+        delay: anime.stagger(80, { start: 350 })
+      });
+    }
+  }
+  initAnimeHeroSuite();
+
+  // ── 4. MOTION v12 — REAL SPRING PHYSICS GESTURES, INVIEW & SCROLL ────────
+  function bindMotionSpringGestures(root = document) {
+    if (!hasMotion) return;
+
+    // A. Spring Hover & Tactile Press on 3D Push Buttons
+    root.querySelectorAll('.btn-3d-primary, .btn-3d-white').forEach(btn => {
+      if (btn.dataset.motionBound === '1') return;
+      btn.dataset.motionBound = '1';
+
+      if (!isTouch && typeof Motion.hover === 'function') {
+        Motion.hover(btn, () => {
+          Motion.animate(btn, { scale: 1.035, y: -2 }, { type: 'spring', stiffness: 440, damping: 18 });
+          return () => {
+            Motion.animate(btn, { scale: 1, y: 0 }, { type: 'spring', stiffness: 380, damping: 22 });
+          };
+        });
+      }
+
+      if (typeof Motion.press === 'function') {
+        Motion.press(btn, () => {
+          Motion.animate(btn, { scale: 0.955, y: 2 }, { type: 'spring', stiffness: 600, damping: 24 });
+          return () => {
+            Motion.animate(btn, { scale: 1, y: 0 }, { type: 'spring', stiffness: 420, damping: 16 });
+          };
+        });
+      }
+    });
+
+    // B. Spring Bounce on Logo Emblems & Stat Cubes
+    if (!isTouch && typeof Motion.hover === 'function') {
+      root.querySelectorAll('.logo-emblem, .stat-cube-3d, .mobile-dock-btn').forEach(el => {
+        if (el.dataset.motionHover === '1') return;
+        el.dataset.motionHover = '1';
+        Motion.hover(el, () => {
+          Motion.animate(el, { scale: 1.07, y: -4 }, { type: 'spring', stiffness: 400, damping: 16 });
+          return () => {
+            Motion.animate(el, { scale: 1, y: 0 }, { type: 'spring', stiffness: 320, damping: 20 });
+          };
+        });
+      });
+    }
+  }
+
+  function initMotionScrollAndInView() {
+    if (!hasMotion) return;
+
+    bindMotionSpringGestures(document);
+
+    // C. Motion.inView — Bouncy Spring Pop on Kaderisasi 3D Timeline Nodes
+    if (typeof Motion.inView === 'function') {
+      Motion.inView('.kader-node-dot', (element) => {
+        Motion.animate(
+          element,
+          { scale: [0.2, 1.32, 1], opacity: [0, 1] },
+          { type: 'spring', stiffness: 380, damping: 14 }
+        );
+        return () => {
+          Motion.animate(element, { scale: 0.5, opacity: 0.4 }, { duration: 0.25 });
+        };
+      });
+
+      // D. Motion.inView — Section Pills Spring Entrance
+      Motion.inView('.section-pill-3d', (element) => {
+        if (element.closest('#profil')) return;
+        Motion.animate(
+          element,
+          { scale: [0.85, 1.04, 1], y: [14, 0], opacity: [0, 1] },
+          { type: 'spring', stiffness: 340, damping: 18 }
+        );
+      });
+    }
+
+    // E. Motion.scroll — Smooth Scroll-Linked Orbit Ring Rotation & Progress Scale
+    if (typeof Motion.scroll === 'function') {
+      const orbit2 = document.querySelector('.hero-orbit-ring-2');
+      if (orbit2) {
+        Motion.scroll(
+          Motion.animate(orbit2, { rotate: [0, 48], scale: [1, 1.12] }),
+          { target: document.getElementById('profil') || document.body, offset: ['start start', 'end start'] }
+        );
+      }
+
+      const brandAvatar = document.querySelector('.navbar-3d a img');
+      if (brandAvatar) {
+        Motion.scroll(
+          Motion.animate(brandAvatar, { scale: [1, 1.08, 1] })
+        );
+      }
+    }
+  }
+  initMotionScrollAndInView();
+
+  // ── 5. TRUE MULTI-LAYER 3D CURSOR TILT ENGINE ([data-tilt-3d]) ───────────
   function bind3DTilt(root = document) {
     if (isTouch) return;
     root.querySelectorAll('[data-tilt-3d]').forEach(card => {
@@ -358,7 +549,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   bind3DTilt(document);
 
-  // ── 4. TOP PROGRESS BAR, NAVBAR STATE & ACTIVE SECTION TRACKER ───────────
+  // ── 6. TOP PROGRESS BAR, NAVBAR STATE & ACTIVE SECTION TRACKER ───────────
   const progressBar = document.getElementById('scroll-progress');
   const navbar = document.querySelector('.navbar-3d');
   const trackedSections = document.querySelectorAll('section[id]');
@@ -389,7 +580,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, { passive: true });
 
-  // ── 5. MOBILE HAMBURGER DRAWER ───────────────────────────────────────────
+  // ── 7. MOBILE HAMBURGER DRAWER (WITH MOTION SPRING) ──────────────────────
   const mobileToggle = document.getElementById('mobile-menu-toggle');
   const mobileDrawer = document.getElementById('mobile-drawer');
   const hamburgerIcon = document.getElementById('hamburger-icon');
@@ -399,56 +590,18 @@ document.addEventListener('DOMContentLoaded', () => {
     mobileDrawer?.classList.toggle('hidden', !open);
     hamburgerIcon?.classList.toggle('hidden', open);
     closeIcon?.classList.toggle('hidden', !open);
+    if (open && mobileDrawer && hasMotion) {
+      Motion.animate(mobileDrawer, { opacity: [0, 1], y: [-12, 0] }, { type: 'spring', stiffness: 360, damping: 24 });
+    }
   };
 
-  mobileToggle?.addEventListener('click', () => {
-    setDrawer(mobileDrawer?.classList.contains('hidden'));
-  });
+  mobileToggle?.addEventListener('click', () => setDrawer(mobileDrawer?.classList.contains('hidden')));
   document.querySelectorAll('.mobile-nav-link').forEach(link => {
     link.addEventListener('click', () => setDrawer(false));
   });
 
-  // ── 6. ANIMATED 3D STAT COUNTERS ─────────────────────────────────────────
-  document.querySelectorAll('[data-counter]').forEach(el => {
-    const target = parseInt(el.dataset.counter, 10) || 0;
-    if (typeof gsap !== 'undefined') {
-      const obj = { val: 0 };
-      gsap.to(obj, {
-        val: target,
-        duration: 1.4,
-        delay: 0.25,
-        ease: 'power3.out',
-        onUpdate: () => { el.textContent = Math.round(obj.val); }
-      });
-    }
-  });
-
-  // ── 7. TRUE BIDIRECTIONAL 3D SCROLL ANIMATIONS (DOWN & UP) ───────────────
-  if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-    // Crisp 3D Hero Entrance Choreography on Load
-    gsap.from('#profil .section-pill-3d, #profil h1, #profil p, #profil .stat-cube-3d', {
-      opacity: 0,
-      y: 34,
-      rotationX: 14,
-      duration: 0.85,
-      ease: 'power3.out',
-      stagger: 0.08,
-      clearProps: 'transform,opacity'
-    });
-
-    gsap.from('.hero-3d-stage', {
-      opacity: 0,
-      y: 45,
-      rotationY: -14,
-      scale: 0.92,
-      duration: 1.05,
-      delay: 0.15,
-      ease: 'power3.out',
-      clearProps: 'transform,opacity'
-    });
-
-    // 3D Cards & Folders: bidirectional 4-callback choreography
-    // clearProps: 'transform' ensures hover tilt & 3D folder perspective remain razor-sharp
+  // ── 8. GSAP + SCROLLTRIGGER — BIDIRECTIONAL 3D SCROLL REVEALS (DOWN & UP) ─
+  if (hasST) {
     ScrollTrigger.batch('.reveal-3d', {
       start: 'top 90%',
       end: 'bottom 10%',
@@ -472,7 +625,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Section headers: 3D tilt-slide in both directions
     ScrollTrigger.batch('.reveal-3d-header', {
       start: 'top 92%',
       end: 'bottom 8%',
@@ -496,22 +648,75 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Scrubbed 3D Parallax on Hero Portrait & Orbit Badges
+    // Scrubbed 3D Parallax on Hero Portrait Stage
     gsap.to('.hero-3d-stage', {
       scrollTrigger: { trigger: '#profil', start: 'top top', end: 'bottom top', scrub: 1.2 },
-      y: 70,
+      y: 72,
       rotationX: 6,
       ease: 'none'
     });
   }
 
-  // ── 8. 3D FOLDER ENGINE A — WEBSITE & SISTEM (#proyek) ───────────────────
-  const webFolders = document.querySelectorAll('[data-web-folder]');
-  const webVault = document.getElementById('web-vault');
+  // Subtle Anime.js tactile ripple on 3D Folder hover count badge
+  if (hasAnime && !isTouch) {
+    document.querySelectorAll('.folder-3d').forEach(folder => {
+      folder.addEventListener('mouseenter', () => {
+        const pill = folder.querySelector('.folder-count-pill');
+        if (pill) {
+          anime.remove(pill);
+          anime({ targets: pill, scale: [1, 1.14, 1], duration: 480, easing: 'easeOutElastic(1, .6)' });
+        }
+      });
+    });
+  }
+
+  // Helper: Animate Vault Open with Motion Spring + Anime.js 3D Grid Stagger
+  function animateVaultOpen(vaultEl, cardSelector) {
+    if (hasMotion && vaultEl) {
+      Motion.animate(
+        vaultEl,
+        { opacity: [0, 1], y: [28, 0], scale: [0.96, 1] },
+        { type: 'spring', stiffness: 280, damping: 24 }
+      );
+    } else if (hasGSAP && vaultEl) {
+      gsap.fromTo(vaultEl, { opacity: 0, y: 24, scale: 0.97 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, clearProps: 'transform' });
+    }
+
+    const cards = vaultEl ? vaultEl.querySelectorAll(cardSelector) : [];
+    if (!cards.length) return;
+
+    if (hasAnime) {
+      const cols = window.innerWidth >= 1024 ? 3 : (window.innerWidth >= 640 ? 2 : 1);
+      const rows = Math.max(1, Math.ceil(cards.length / cols));
+      anime.remove(cards);
+      anime({
+        targets: cards,
+        translateY: [48, 0],
+        rotateX: [22, 0],
+        scale: [0.88, 1],
+        opacity: [0, 1],
+        duration: 720,
+        delay: anime.stagger(Math.min(55, Math.max(22, 420 / cards.length)), { grid: [cols, rows], from: 'first' }),
+        easing: 'easeOutElastic(1, .75)',
+        complete: () => {
+          cards.forEach(c => { c.style.transform = ''; });
+        }
+      });
+    } else if (hasGSAP) {
+      gsap.fromTo(cards,
+        { opacity: 0, y: 38, rotationX: 16, scale: 0.92 },
+        { opacity: 1, y: 0, rotationX: 0, scale: 1, duration: 0.55, ease: 'power3.out', stagger: 0.04, clearProps: 'transform' }
+      );
+    }
+  }
+
+  // ── 9. 3D FOLDER ENGINE A — WEBSITE & SISTEM (#proyek) ───────────────────
+  const webFolders    = document.querySelectorAll('[data-web-folder]');
+  const webVault      = document.getElementById('web-vault');
   const webVaultTitle = document.getElementById('web-vault-title');
   const webVaultCount = document.getElementById('web-vault-count');
-  const webVaultSub = document.getElementById('web-vault-sub');
-  const webVaultGrid = document.getElementById('web-vault-grid');
+  const webVaultSub   = document.getElementById('web-vault-sub');
+  const webVaultGrid  = document.getElementById('web-vault-grid');
   const webVaultClose = document.getElementById('web-vault-close');
   let activeWebFolder = null;
 
@@ -534,7 +739,6 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="card-3d p-5 flex flex-col justify-between web-vault-item" data-tilt-3d data-tilt-max="9">
         <div class="card-glare"></div>
         <div class="z-layer-1">
-          <!-- Browser Mockup Chrome -->
           <div class="browser-chrome mb-4">
             <span class="vault-dot bg-[#FF5F57]"></span>
             <span class="vault-dot bg-[#FFBD2E]"></span>
@@ -546,7 +750,6 @@ document.addEventListener('DOMContentLoaded', () => {
             </span>
           </div>
 
-          <!-- Crisp 3D Logo Stage -->
           <div class="web-logo-stage mb-4">
             <img src="${esc(sys.logo)}" alt="${esc(sys.name)}" class="${logoClass} no-download">
             <div class="img-shield"></div>
@@ -577,16 +780,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const cue = btn.querySelector('.folder-cue-text');
       if (cue) cue.textContent = 'Klik untuk buka folder';
     });
-    if (webVault) {
-      webVault.classList.remove('is-open');
-    }
-    if (typeof ScrollTrigger !== 'undefined') setTimeout(() => ScrollTrigger.refresh(), 180);
+    if (webVault) webVault.classList.remove('is-open');
+    if (hasST) setTimeout(() => ScrollTrigger.refresh(), 180);
   }
 
   function openWebFolder(folderKey, shouldScroll = true) {
     if (!webVault || !webVaultGrid) return;
-
-    // Toggle closed if clicking the already open folder
     if (activeWebFolder === folderKey && shouldScroll) {
       closeWebFolder();
       return;
@@ -608,28 +807,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (webVaultTitle) webVaultTitle.textContent = meta.name;
     if (webVaultCount) webVaultCount.textContent = `${items.length} Website`;
-    if (webVaultSub) webVaultSub.textContent = meta.sub;
+    if (webVaultSub)   webVaultSub.textContent   = meta.sub;
 
     webVaultGrid.innerHTML = items.map(renderWebCard).join('');
     webVault.classList.add('is-open');
 
     bind3DTilt(webVaultGrid);
+    bindMotionSpringGestures(webVaultGrid);
+    animateVaultOpen(webVault, '.web-vault-item');
 
-    if (typeof gsap !== 'undefined') {
-      gsap.fromTo(webVault,
-        { opacity: 0, y: 24, rotationX: 8, scale: 0.97 },
-        { opacity: 1, y: 0, rotationX: 0, scale: 1, duration: 0.52, ease: 'power3.out', clearProps: 'transform' }
-      );
-      gsap.fromTo(webVaultGrid.querySelectorAll('.web-vault-item'),
-        { opacity: 0, y: 42, rotationX: 18, scale: 0.9 },
-        { opacity: 1, y: 0, rotationX: 0, scale: 1, duration: 0.65, ease: 'back.out(1.2)', stagger: 0.08, delay: 0.08, clearProps: 'transform' }
-      );
-    }
-
-    if (shouldScroll) {
-      setTimeout(() => smoothScrollTo(webVault, -100), 120);
-    }
-    if (typeof ScrollTrigger !== 'undefined') setTimeout(() => ScrollTrigger.refresh(), 300);
+    if (shouldScroll) setTimeout(() => smoothScrollTo(webVault, -100), 120);
+    if (hasST) setTimeout(() => ScrollTrigger.refresh(), 320);
   }
 
   webFolders.forEach(btn => {
@@ -637,26 +825,24 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   webVaultClose?.addEventListener('click', closeWebFolder);
 
-  // Hero Quick-Open Website Folder Button
   document.querySelectorAll('[data-quick-open-web]').forEach(btn => {
     btn.addEventListener('click', () => {
-      const key = btn.dataset.quickOpenWeb || 'semua';
       activeWebFolder = null;
-      openWebFolder(key, false);
+      openWebFolder(btn.dataset.quickOpenWeb || 'semua', false);
       smoothScrollTo(document.getElementById('proyek'), -85);
     });
   });
 
-  // ── 9. 3D FOLDER ENGINE B — SERTIFIKAT & SK RESMI (#sertifikat) ──────────
-  const certFolders = document.querySelectorAll('[data-cert-folder]');
-  const certVault = document.getElementById('cert-vault');
-  const certVaultTitle = document.getElementById('cert-vault-title');
-  const certVaultCount = document.getElementById('cert-vault-count');
-  const certVaultSub = document.getElementById('cert-vault-sub');
-  const certVaultGrid = document.getElementById('cert-vault-grid');
-  const certVaultEmpty = document.getElementById('cert-vault-empty');
+  // ── 10. 3D FOLDER ENGINE B — SERTIFIKAT & SK RESMI (#sertifikat) ─────────
+  const certFolders     = document.querySelectorAll('[data-cert-folder]');
+  const certVault       = document.getElementById('cert-vault');
+  const certVaultTitle  = document.getElementById('cert-vault-title');
+  const certVaultCount  = document.getElementById('cert-vault-count');
+  const certVaultSub    = document.getElementById('cert-vault-sub');
+  const certVaultGrid   = document.getElementById('cert-vault-grid');
+  const certVaultEmpty  = document.getElementById('cert-vault-empty');
   const certVaultSearch = document.getElementById('cert-vault-search');
-  const certVaultClose = document.getElementById('cert-vault-close');
+  const certVaultClose  = document.getElementById('cert-vault-close');
 
   let activeCertFolder = null;
   let currentCertList = [];
@@ -674,7 +860,6 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="card-glare"></div>
 
         <div>
-          <!-- Protected Certificate Thumbnail -->
           <div class="relative aspect-[16/10] rounded-t-[21px] overflow-hidden bg-slate-100 border-b border-slate-200">
             <img src="${esc(cert.img)}"
                  alt="${esc(cert.title)}"
@@ -698,7 +883,6 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
           </div>
 
-          <!-- Metadata -->
           <div class="p-4 sm:p-5 z-layer-1">
             <h4 class="font-black text-navy text-sm group-hover:text-teal transition-colors line-clamp-2 leading-snug">
               ${esc(cert.title)}
@@ -737,25 +921,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (certVaultCount) certVaultCount.textContent = `${list.length} Berkas`;
     certVaultGrid.innerHTML = list.map((c, idx) => renderCertCard(c, idx)).join('');
 
-    // Click handlers for Lightbox
     certVaultGrid.querySelectorAll('.cert-card-item').forEach(card => {
       card.addEventListener('click', () => {
-        const idx = parseInt(card.dataset.certIndex, 10);
-        openLightboxGallery(currentCertList, idx);
+        openLightboxGallery(currentCertList, parseInt(card.dataset.certIndex, 10));
       });
     });
 
     bind3DTilt(certVaultGrid);
-
-    if (animateCards && typeof gsap !== 'undefined') {
-      const cards = certVaultGrid.querySelectorAll('.cert-card-item');
-      gsap.fromTo(cards,
-        { opacity: 0, y: 38, rotationX: 16, scale: 0.92 },
-        { opacity: 1, y: 0, rotationX: 0, scale: 1, duration: 0.55, ease: 'power3.out', stagger: { each: 0.03, from: 'start', amount: 0.45 }, clearProps: 'transform' }
-      );
+    if (animateCards) {
+      animateVaultOpen(certVault, '.cert-card-item');
     }
-
-    if (typeof ScrollTrigger !== 'undefined') setTimeout(() => ScrollTrigger.refresh(), 280);
+    if (hasST) setTimeout(() => ScrollTrigger.refresh(), 300);
   }
 
   function closeCertFolder() {
@@ -768,7 +944,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     if (certVault) certVault.classList.remove('is-open');
     if (certVaultSearch) certVaultSearch.value = '';
-    if (typeof ScrollTrigger !== 'undefined') setTimeout(() => ScrollTrigger.refresh(), 180);
+    if (hasST) setTimeout(() => ScrollTrigger.refresh(), 180);
   }
 
   function getCertsForFolder(folderKey, query = '') {
@@ -791,7 +967,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function openCertFolder(folderKey, shouldScroll = true) {
     if (!certVault || !certVaultGrid) return;
-
     if (activeCertFolder === folderKey && shouldScroll) {
       closeCertFolder();
       return;
@@ -809,23 +984,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (certVaultSearch) certVaultSearch.value = '';
-    if (certVaultTitle) certVaultTitle.textContent = meta.name;
-    if (certVaultSub) certVaultSub.textContent = meta.sub;
+    if (certVaultTitle)  certVaultTitle.textContent = meta.name;
+    if (certVaultSub)    certVaultSub.textContent   = meta.sub;
 
     certVault.classList.add('is-open');
-    const items = getCertsForFolder(folderKey);
-    paintCertGrid(items, true);
+    paintCertGrid(getCertsForFolder(folderKey), true);
 
-    if (typeof gsap !== 'undefined') {
-      gsap.fromTo(certVault,
-        { opacity: 0, y: 24, rotationX: 7, scale: 0.98 },
-        { opacity: 1, y: 0, rotationX: 0, scale: 1, duration: 0.5, ease: 'power3.out', clearProps: 'transform' }
-      );
-    }
-
-    if (shouldScroll) {
-      setTimeout(() => smoothScrollTo(certVault, -100), 120);
-    }
+    if (shouldScroll) setTimeout(() => smoothScrollTo(certVault, -100), 120);
   }
 
   certFolders.forEach(btn => {
@@ -838,29 +1003,28 @@ document.addEventListener('DOMContentLoaded', () => {
     paintCertGrid(getCertsForFolder(activeCertFolder, e.target.value), false);
   });
 
-  // Hero Quick-Open Certificate Folder Button
   document.querySelectorAll('[data-quick-open-cert]').forEach(btn => {
     btn.addEventListener('click', () => {
-      const key = btn.dataset.quickOpenCert || 'semua';
       activeCertFolder = null;
-      openCertFolder(key, false);
+      openCertFolder(btn.dataset.quickOpenCert || 'semua', false);
       smoothScrollTo(document.getElementById('sertifikat'), -85);
     });
   });
 
-  // ── 10. 3D MULTI-PAGE & GALLERY LIGHTBOX MODAL ───────────────────────────
-  const lbOverlay = document.getElementById('lightbox-overlay');
-  const lbClose = document.getElementById('lightbox-close');
-  const lbCategory = document.getElementById('lb-category');
-  const lbCounter = document.getElementById('lb-counter');
-  const lbTitle = document.getElementById('lb-title');
-  const lbImg = document.getElementById('lb-img');
-  const lbIssuer = document.getElementById('lb-issuer');
-  const lbDesc = document.getElementById('lb-desc');
-  const lbPagesBar = document.getElementById('lb-pages-bar');
+  // ── 11. 3D MULTI-PAGE & GALLERY LIGHTBOX (WITH MOTION SPRING PHYSICS) ────
+  const lbOverlay      = document.getElementById('lightbox-overlay');
+  const lbCard         = lbOverlay?.querySelector('.lightbox-card');
+  const lbClose        = document.getElementById('lightbox-close');
+  const lbCategory     = document.getElementById('lb-category');
+  const lbCounter      = document.getElementById('lb-counter');
+  const lbTitle        = document.getElementById('lb-title');
+  const lbImg          = document.getElementById('lb-img');
+  const lbIssuer       = document.getElementById('lb-issuer');
+  const lbDesc         = document.getElementById('lb-desc');
+  const lbPagesBar     = document.getElementById('lb-pages-bar');
   const lbPagesButtons = document.getElementById('lb-pages-buttons');
-  const lbPrev = document.getElementById('lb-prev');
-  const lbNext = document.getElementById('lb-next');
+  const lbPrev         = document.getElementById('lb-prev');
+  const lbNext         = document.getElementById('lb-next');
 
   let lbList = [];
   let lbIdx = 0;
@@ -868,27 +1032,37 @@ document.addEventListener('DOMContentLoaded', () => {
   function showLightboxItem(item, listLen = 1, curIdx = 0) {
     if (!item || !lbOverlay) return;
     if (lbCategory) lbCategory.textContent = item.category || 'Dokumen';
-    if (lbTitle) lbTitle.textContent = item.title || '';
-    if (lbIssuer) lbIssuer.textContent = item.issuer || '';
-    if (lbDesc) lbDesc.textContent = item.desc || '';
-    if (lbCounter) lbCounter.textContent = listLen > 1 ? `${curIdx + 1} / ${listLen}` : '';
+    if (lbTitle)    lbTitle.textContent    = item.title || '';
+    if (lbIssuer)   lbIssuer.textContent   = item.issuer || '';
+    if (lbDesc)     lbDesc.textContent     = item.desc || '';
+    if (lbCounter)  lbCounter.textContent  = listLen > 1 ? `${curIdx + 1} / ${listLen}` : '';
 
     const pages = Array.isArray(item.pages) && item.pages.length > 1 ? item.pages : null;
-    if (lbImg) lbImg.src = pages ? pages[0] : (item.img || '');
+    if (lbImg) {
+      lbImg.src = pages ? pages[0] : (item.img || '');
+      if (hasMotion) {
+        Motion.animate(lbImg, { opacity: [0.25, 1], scale: [0.96, 1] }, { type: 'spring', stiffness: 320, damping: 24 });
+      }
+    }
 
-    // Multi-page switcher for Official SKs
     if (pages && lbPagesBar && lbPagesButtons) {
+      const pLabel = item.pageLabel || 'Halaman';
       lbPagesBar.classList.remove('hidden');
       lbPagesButtons.innerHTML = pages.map((src, pIdx) => `
         <button type="button" class="lb-page-btn ${pIdx === 0 ? 'active' : ''}" data-lb-page="${pIdx}">
-          Halaman ${pIdx + 1}
+          ${esc(pLabel)} ${pIdx + 1}
         </button>
       `).join('');
 
       lbPagesButtons.querySelectorAll('[data-lb-page]').forEach(pBtn => {
         pBtn.addEventListener('click', () => {
           const pi = parseInt(pBtn.dataset.lbPage, 10);
-          if (lbImg) lbImg.src = pages[pi];
+          if (lbImg) {
+            lbImg.src = pages[pi];
+            if (hasMotion) {
+              Motion.animate(lbImg, { opacity: [0.2, 1], scale: [0.97, 1] }, { type: 'spring', stiffness: 340, damping: 25 });
+            }
+          }
           lbPagesButtons.querySelectorAll('[data-lb-page]').forEach(b => b.classList.remove('active'));
           pBtn.classList.add('active');
         });
@@ -897,13 +1071,17 @@ document.addEventListener('DOMContentLoaded', () => {
       lbPagesBar?.classList.add('hidden');
     }
 
-    // Prev / Next arrows
     lbPrev?.classList.toggle('hidden', listLen <= 1);
     lbNext?.classList.toggle('hidden', listLen <= 1);
 
+    const wasClosed = !lbOverlay.classList.contains('active');
     lbOverlay.classList.add('active');
     document.body.style.overflow = 'hidden';
     lenis?.stop();
+
+    if (wasClosed && lbCard && hasMotion) {
+      Motion.animate(lbCard, { scale: [0.88, 1], y: [26, 0], opacity: [0, 1] }, { type: 'spring', stiffness: 340, damping: 24 });
+    }
   }
 
   function openLightboxGallery(list, index) {
@@ -935,23 +1113,22 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target === lbOverlay) closeLightbox();
   });
 
-  // Direct "Lihat SK Resmi" buttons inside Organisasi cards
   document.querySelectorAll('[data-sk-open]').forEach(btn => {
     btn.addEventListener('click', () => {
       let pages = [];
       try { pages = JSON.parse(btn.dataset.pages || '[]'); } catch (e) {}
       openLightboxGallery([{
-        category: btn.dataset.category || 'SK Resmi Organisasi',
-        title: btn.dataset.title || '',
-        issuer: btn.dataset.issuer || '',
-        desc: btn.dataset.desc || '',
-        img: btn.dataset.img || '',
+        category:  btn.dataset.category || 'SK Resmi Organisasi',
+        pageLabel: btn.dataset.pageLabel || 'Halaman',
+        title:     btn.dataset.title || '',
+        issuer:   btn.dataset.issuer || '',
+        desc:     btn.dataset.desc || '',
+        img:      btn.dataset.img || '',
         pages
       }], 0);
     });
   });
 
-  // Keyboard navigation in Lightbox
   document.addEventListener('keydown', (e) => {
     if (!lbOverlay?.classList.contains('active')) return;
     if (e.key === 'Escape') closeLightbox();
@@ -959,15 +1136,26 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'ArrowLeft') lbPrev?.click();
   });
 
-  // ── 11. COPY TO CLIPBOARD + TOAST ────────────────────────────────────────
+  // ── 12. COPY TO CLIPBOARD + MOTION SPRING TOAST ──────────────────────────
   const toast = document.getElementById('toast');
   let toastTimer = null;
   function showToast(msg) {
     if (!toast) return;
     toast.textContent = msg;
     toast.classList.add('show');
+    if (hasMotion) {
+      Motion.animate(toast, { y: [42, 0], scale: [0.9, 1], opacity: [0, 1] }, { type: 'spring', stiffness: 420, damping: 22 });
+    }
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
+    toastTimer = setTimeout(() => {
+      if (hasMotion) {
+        Motion.animate(toast, { y: 48, scale: 0.92, opacity: 0 }, { duration: 0.28 }).finished.then(() => {
+          toast.classList.remove('show');
+        });
+      } else {
+        toast.classList.remove('show');
+      }
+    }, 2600);
   }
 
   document.querySelectorAll('[data-copy]').forEach(btn => {
@@ -989,7 +1177,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ── 12. INTERACTIVE SPATIAL GLOWING CURSOR (DESKTOP) ─────────────────────
+  // ── 13. SPATIAL GLOWING CURSOR RING (DESKTOP) ────────────────────────────
   if (!isTouch) {
     const cursor = document.createElement('div');
     cursor.className = 'spatial-cursor';
@@ -1003,7 +1191,7 @@ document.addEventListener('DOMContentLoaded', () => {
       tx = e.clientX;
       ty = e.clientY;
       dot.style.left = `${tx}px`;
-      dot.style.top = `${ty}px`;
+      dot.style.top  = `${ty}px`;
       const overInteractive = e.target.closest('a, button, .folder-3d, .cert-card-item, [data-tilt-3d]');
       cursor.classList.toggle('hovering', Boolean(overInteractive));
     }, { passive: true });
@@ -1012,13 +1200,13 @@ document.addEventListener('DOMContentLoaded', () => {
       cx += (tx - cx) * 0.16;
       cy += (ty - cy) * 0.16;
       cursor.style.left = `${cx}px`;
-      cursor.style.top = `${cy}px`;
+      cursor.style.top  = `${cy}px`;
       requestAnimationFrame(trackCursor);
     };
     trackCursor();
   }
 
-  // ── 13. STRICT MULTI-LAYER ANTI-DOWNLOAD SECURITY ────────────────────────
+  // ── 14. STRICT MULTI-LAYER ANTI-DOWNLOAD SECURITY ────────────────────────
   document.addEventListener('contextmenu', (e) => {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
     e.preventDefault();

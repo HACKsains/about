@@ -81,12 +81,16 @@ $app_config = [
     ]
 ];
 
-// Header Keamanan HTTP
+// Header Keamanan HTTP & Anti-Cache Download Bug
 function send_security_headers(): void
 {
     if (headers_sent()) {
         return;
     }
+    header('Content-Type: text/html; charset=UTF-8');
+    header('Cache-Control: no-cache, no-store, must-revalidate');
+    header('Pragma: no-cache');
+    header('Expires: 0');
     header('X-Content-Type-Options: nosniff');
     header('X-Frame-Options: SAMEORIGIN');
     header('X-XSS-Protection: 1; mode=block');

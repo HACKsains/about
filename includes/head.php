@@ -75,11 +75,13 @@ $js_v      = @filemtime(__DIR__ . '/../assets/js/spatial-engine.js') ?: time();
   <!-- Main Spatial 3D CSS -->
   <link rel="stylesheet" href="assets/css/spatial-3d.css?v=<?php echo $css_v; ?>" />
 
-  <!-- Three.js WebGL 3D + GSAP + ScrollTrigger + Lenis Smooth Scroll -->
+  <!-- Three.js WebGL 3D + GSAP + ScrollTrigger + Lenis + Motion v12 + Anime.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/motion@12.0.6/dist/motion.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
   <script src="assets/js/spatial-engine.js?v=<?php echo $js_v; ?>" defer></script>
 
   <!-- JSON-LD Structured Data -->

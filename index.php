@@ -298,113 +298,129 @@ $total_kader      = count($kaderisasi);
       <p class="text-slate-500 text-sm mt-2">Pengalaman kepemimpinan lengkap beserta lampiran Surat Keputusan (SK) resmi yang dapat diverifikasi langsung.</p>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
-
-      <!-- Column A: Riwayat Organisasi (8 Organisasi + Tombol Lihat SK Resmi) -->
-      <div class="lg:col-span-7">
-        <div class="flex items-center justify-between mb-6 reveal-3d-header">
-          <div>
-            <h3 class="text-xl sm:text-2xl font-black text-navy">Riwayat Organisasi &amp; Pengabdian</h3>
-            <p class="text-slate-500 text-xs mt-0.5 font-medium"><?php echo $total_orgs; ?> peran aktif &amp; purna tugas terverifikasi.</p>
-          </div>
-          <span class="text-xs font-mono font-extrabold px-3 py-1 rounded-full bg-white border border-slate-200 text-teal shadow-sm">
-            <?php echo $total_sk; ?> SK Resmi
-          </span>
+    <!-- BLOCK A: Riwayat Organisasi — Horizontal 3 x 3 Grid (9 Organisasi) -->
+    <div>
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-7 reveal-3d-header">
+        <div>
+          <h3 class="text-xl sm:text-2xl font-black text-navy">Riwayat Organisasi &amp; Pengabdian</h3>
+          <p class="text-slate-500 text-xs mt-0.5 font-medium"><?php echo $total_orgs; ?> peran aktif &amp; purna tugas terverifikasi dalam tata letak 3 &times; 3.</p>
         </div>
-
-        <div class="space-y-4">
-          <?php foreach ($organizations as $org): ?>
-            <div class="card-3d p-5 flex items-start gap-4 reveal-3d" data-tilt-3d data-tilt-max="8">
-              <div class="card-glare"></div>
-
-              <div class="logo-emblem <?php echo !empty($org['wide']) ? 'w-16 px-2' : ''; ?>">
-                <img src="<?php echo htmlspecialchars($org['logo']); ?>" alt="<?php echo htmlspecialchars($org['org']); ?>" class="no-download">
-              </div>
-
-              <div class="flex-1 min-w-0 z-layer-1">
-                <div class="flex flex-wrap items-center justify-between gap-2">
-                  <span class="text-[11px] font-extrabold font-mono text-teal uppercase tracking-wider">
-                    <?php echo htmlspecialchars($org['role']); ?>
-                  </span>
-                  <div class="flex items-center gap-2">
-                    <?php if (!empty($org['period'])): ?>
-                      <span class="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
-                        <?php echo htmlspecialchars($org['period']); ?>
-                      </span>
-                    <?php endif; ?>
-                    <?php if (!empty($org['url'])): ?>
-                      <a href="<?php echo htmlspecialchars($org['url']); ?>" target="_blank" rel="noopener noreferrer" class="text-xs font-extrabold text-navy hover:text-teal transition-colors">
-                        Kunjungi &rarr;
-                      </a>
-                    <?php endif; ?>
-                  </div>
-                </div>
-
-                <h4 class="text-base font-black text-navy mt-1"><?php echo htmlspecialchars($org['org']); ?></h4>
-                <p class="text-xs text-slate-600 mt-1 leading-relaxed"><?php echo htmlspecialchars($org['desc']); ?></p>
-
-                <?php if (!empty($org['sk'])): ?>
-                  <div class="mt-3 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
-                    <span class="text-[10.5px] font-mono font-bold text-slate-500 truncate max-w-full">
-                      <?php echo htmlspecialchars($org['sk']['number']); ?>
-                    </span>
-                    <button type="button"
-                            class="btn-3d-primary text-[11px] px-3 py-1.5 rounded-xl"
-                            data-sk-open
-                            data-category="SK Resmi Organisasi"
-                            data-title="<?php echo htmlspecialchars($org['sk']['title']); ?>"
-                            data-issuer="<?php echo htmlspecialchars($org['sk']['issuer']); ?>"
-                            data-desc="<?php echo htmlspecialchars($org['sk']['desc']); ?>"
-                            data-img="<?php echo htmlspecialchars($org['sk']['img']); ?>"
-                            data-pages="<?php echo htmlspecialchars(json_encode($org['sk']['pages']), ENT_QUOTES, 'UTF-8'); ?>">
-                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                      <span>Lihat SK Resmi (<?php echo count($org['sk']['pages']); ?> Hal.)</span>
-                    </button>
-                  </div>
-                <?php endif; ?>
-              </div>
-            </div>
-          <?php endforeach; ?>
-        </div>
+        <span class="text-xs font-mono font-extrabold px-3.5 py-1.5 rounded-full bg-white border border-slate-200 text-teal shadow-sm">
+          <?php echo $total_orgs; ?> Organisasi &middot; <?php echo $total_sk; ?> SK Resmi
+        </span>
       </div>
 
-      <!-- Column B: Riwayat Kaderisasi 3D Ascending Timeline -->
-      <div class="lg:col-span-5">
-        <div class="mb-6 reveal-3d-header">
-          <h3 class="text-xl sm:text-2xl font-black text-navy">Riwayat Kaderisasi Formal</h3>
-          <p class="text-slate-500 text-xs mt-0.5 font-medium">Jenjang perkaderan IPNU-IPPNU &amp; Gerakan Pemuda Ansor.</p>
-        </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <?php foreach ($organizations as $org): ?>
+          <div class="card-3d p-5 flex flex-col justify-between h-full reveal-3d" data-tilt-3d data-tilt-max="8">
+            <div class="card-glare"></div>
 
-        <div class="kader-rail space-y-4">
+            <div class="z-layer-1">
+              <!-- Top: Logo Emblem + Period Pill -->
+              <div class="flex items-start justify-between gap-3 mb-4">
+                <div class="logo-emblem <?php echo !empty($org['wide']) ? 'w-16 px-2' : ''; ?>">
+                  <img src="<?php echo htmlspecialchars($org['logo']); ?>" alt="<?php echo htmlspecialchars($org['org']); ?>" class="no-download">
+                </div>
+                <?php if (!empty($org['period'])): ?>
+                  <span class="text-[10px] font-mono font-extrabold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200 whitespace-nowrap">
+                    <?php echo htmlspecialchars($org['period']); ?>
+                  </span>
+                <?php endif; ?>
+              </div>
+
+              <!-- Role, Organization Name & Desc -->
+              <span class="block text-[11px] font-extrabold font-mono text-teal uppercase tracking-wider leading-snug">
+                <?php echo htmlspecialchars($org['role']); ?>
+              </span>
+              <h4 class="text-base font-black text-navy mt-1 leading-snug"><?php echo htmlspecialchars($org['org']); ?></h4>
+              <p class="text-xs text-slate-600 mt-2 leading-relaxed"><?php echo htmlspecialchars($org['desc']); ?></p>
+            </div>
+
+            <!-- Footer Action (SK Resmi / Website Link) -->
+            <div class="mt-4 pt-3.5 border-t border-slate-100 z-layer-1">
+              <?php if (!empty($org['sk'])): ?>
+                <div class="space-y-2">
+                  <div class="text-[10px] font-mono font-bold text-slate-400 truncate" title="<?php echo htmlspecialchars($org['sk']['number']); ?>">
+                    <?php echo htmlspecialchars($org['sk']['number']); ?>
+                  </div>
+                  <button type="button"
+                          class="btn-3d-primary w-full text-[11px] px-3 py-2 rounded-xl"
+                          data-sk-open
+                          data-category="SK Resmi Organisasi"
+                          data-title="<?php echo htmlspecialchars($org['sk']['title']); ?>"
+                          data-issuer="<?php echo htmlspecialchars($org['sk']['issuer']); ?>"
+                          data-desc="<?php echo htmlspecialchars($org['sk']['desc']); ?>"
+                          data-img="<?php echo htmlspecialchars($org['sk']['img']); ?>"
+                          data-pages="<?php echo htmlspecialchars(json_encode($org['sk']['pages']), ENT_QUOTES, 'UTF-8'); ?>">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    <span>Lihat SK Resmi (<?php echo count($org['sk']['pages']); ?> Hal.)</span>
+                  </button>
+                </div>
+              <?php elseif (!empty($org['url'])): ?>
+                <a href="<?php echo htmlspecialchars($org['url']); ?>" target="_blank" rel="noopener noreferrer" class="btn-3d-white w-full text-[11px] px-3 py-2 rounded-xl">
+                  <span>Kunjungi Portal</span>
+                  <span>&rarr;</span>
+                </a>
+              <?php else: ?>
+                <div class="text-[11px] font-mono font-bold text-slate-400 flex items-center gap-1.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-teal"></span>
+                  <span>Rekam Jejak Terverifikasi</span>
+                </div>
+              <?php endif; ?>
+            </div>
+          </div>
+        <?php endforeach; ?>
+      </div>
+    </div>
+
+    <!-- BLOCK B: Riwayat Kaderisasi Formal — Horizontal 3D Timeline Sendiri -->
+    <div id="kaderisasi" class="mt-16 pt-14 border-t border-slate-200/80">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-7 reveal-3d-header">
+        <div>
+          <h3 class="text-xl sm:text-2xl font-black text-navy">Riwayat Kaderisasi Formal</h3>
+          <p class="text-slate-500 text-xs mt-0.5 font-medium">Timeline jenjang perkaderan IPNU-IPPNU &amp; Gerakan Pemuda Ansor secara berurutan (2023 &ndash; Oktober 2026).</p>
+        </div>
+        <span class="text-xs font-mono font-extrabold px-3.5 py-1.5 rounded-full bg-white border border-slate-200 text-navy shadow-sm">
+          <?php echo $total_kader; ?> Jenjang Kaderisasi
+        </span>
+      </div>
+
+      <div class="kader-timeline-wrap no-scrollbar">
+        <div class="kader-rail-h">
           <?php foreach ($kaderisasi as $kad): ?>
-            <div class="relative reveal-3d">
-              <span class="kader-node-dot"></span>
-              <div class="card-3d p-5 flex items-start gap-4" data-tilt-3d data-tilt-max="9">
+            <div class="kader-step-col reveal-3d">
+              <!-- Timeline Orb Node on Horizontal Rail -->
+              <span class="kader-node-dot"><?php echo $kad['level']; ?></span>
+              <span class="kader-stem"></span>
+
+              <!-- 3D Kaderisasi Step Card -->
+              <div class="card-3d p-5 w-full flex-1 flex flex-col justify-between text-center" data-tilt-3d data-tilt-max="9">
                 <div class="card-glare"></div>
 
-                <div class="logo-emblem">
-                  <img src="<?php echo htmlspecialchars($kad['logo']); ?>" alt="<?php echo htmlspecialchars($kad['title']); ?>" class="no-download">
-                </div>
-
-                <div class="flex-1 min-w-0 z-layer-1">
-                  <div class="flex flex-wrap items-center justify-between gap-2">
-                    <div class="flex items-center gap-1.5">
-                      <span class="text-[10.5px] font-black font-mono px-2.5 py-0.5 rounded-full bg-gradient-to-r from-navy to-teal text-white shadow-sm">
-                        Tingkat <?php echo $kad['level']; ?>
+                <div class="z-layer-1">
+                  <div class="flex items-center justify-center gap-1.5 mb-3">
+                    <span class="text-[10px] font-black font-mono px-2.5 py-0.5 rounded-full bg-gradient-to-r from-navy to-teal text-white shadow-sm">
+                      Tingkat <?php echo $kad['level']; ?>
+                    </span>
+                    <?php if (!empty($kad['year'])): ?>
+                      <span class="text-[10px] font-extrabold font-mono px-2.5 py-0.5 rounded-full bg-slate-100 text-navy border border-slate-200">
+                        <?php echo htmlspecialchars($kad['year']); ?>
                       </span>
-                      <?php if (!empty($kad['year'])): ?>
-                        <span class="text-[10.5px] font-extrabold font-mono px-2.5 py-0.5 rounded-full bg-slate-100 text-navy border border-slate-200">
-                          <?php echo htmlspecialchars($kad['year']); ?>
-                        </span>
-                      <?php endif; ?>
-                    </div>
-                    <span class="text-[11px] font-extrabold font-mono text-navy"><?php echo htmlspecialchars($kad['org']); ?></span>
+                    <?php endif; ?>
                   </div>
 
-                  <h4 class="text-lg font-black text-navy mt-1.5"><?php echo htmlspecialchars($kad['title']); ?></h4>
-                  <div class="text-xs font-bold text-teal"><?php echo htmlspecialchars($kad['full']); ?></div>
-                  <p class="text-xs text-slate-600 mt-1.5 font-medium">
-                    <span class="text-navy font-bold">Penyelenggara:</span> <?php echo htmlspecialchars($kad['place']); ?>
+                  <div class="logo-emblem mx-auto mb-3">
+                    <img src="<?php echo htmlspecialchars($kad['logo']); ?>" alt="<?php echo htmlspecialchars($kad['title']); ?>" class="no-download">
+                  </div>
+
+                  <h4 class="text-base font-black text-navy leading-tight"><?php echo htmlspecialchars($kad['title']); ?></h4>
+                  <div class="text-[11.5px] font-bold text-teal mt-0.5"><?php echo htmlspecialchars($kad['full']); ?></div>
+                </div>
+
+                <div class="mt-3.5 pt-3 border-t border-slate-100 z-layer-1">
+                  <div class="text-[10px] font-mono font-extrabold text-navy uppercase tracking-wider"><?php echo htmlspecialchars($kad['org']); ?></div>
+                  <p class="text-[11px] text-slate-600 mt-1 font-medium leading-snug">
+                    <?php echo htmlspecialchars($kad['place']); ?>
                   </p>
                 </div>
               </div>
@@ -412,8 +428,164 @@ $total_kader      = count($kaderisasi);
           <?php endforeach; ?>
         </div>
       </div>
-
     </div>
+
+    <!-- BLOCK C: Riwayat Kaderisasi Non-Formal (3 Kartu Horizontal + Dokumentasi Foto) -->
+    <div id="kaderisasi-nonformal" class="mt-16 pt-14 border-t border-slate-200/80">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-7 reveal-3d-header">
+        <div>
+          <h3 class="text-xl sm:text-2xl font-black text-navy">Riwayat Kaderisasi Non-Formal</h3>
+          <p class="text-slate-500 text-xs mt-0.5 font-medium">Pelatihan spesialisasi jurnalistik, kebencanaan LPBI NU, dan Search and Rescue (SAR).</p>
+        </div>
+        <span class="text-xs font-mono font-extrabold px-3.5 py-1.5 rounded-full bg-white border border-slate-200 text-teal shadow-sm">
+          <?php echo count($kaderisasi_nonformal); ?> Diklat Spesialisasi &middot; 4 Foto
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <?php foreach ($kaderisasi_nonformal as $nf): $pCount = count($nf['photos']); ?>
+          <div class="card-3d flex flex-col justify-between h-full cursor-pointer group reveal-3d"
+               data-tilt-3d data-tilt-max="8"
+               data-sk-open
+               data-page-label="Foto"
+               data-category="Kaderisasi Non-Formal"
+               data-title="<?php echo htmlspecialchars($nf['title']); ?>"
+               data-issuer="<?php echo htmlspecialchars($nf['org'] . ' (' . $nf['year'] . ')'); ?>"
+               data-desc="<?php echo htmlspecialchars($nf['desc']); ?>"
+               data-img="<?php echo htmlspecialchars($nf['photos'][0]); ?>"
+               data-pages="<?php echo htmlspecialchars(json_encode($nf['photos']), ENT_QUOTES, 'UTF-8'); ?>">
+            <div class="card-glare"></div>
+
+            <div>
+              <!-- Photo Frame (Single or Dual Split Collage so ALL photos are visible) -->
+              <div class="relative aspect-[16/10] rounded-t-[21px] overflow-hidden bg-slate-100 border-b border-slate-200">
+                <?php if ($pCount > 1): ?>
+                  <div class="grid grid-cols-12 gap-0.5 w-full h-full bg-white">
+                    <div class="col-span-7 h-full overflow-hidden">
+                      <img src="<?php echo htmlspecialchars($nf['photos'][0]); ?>" alt="<?php echo htmlspecialchars($nf['title']); ?>" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 no-download" loading="lazy">
+                    </div>
+                    <div class="col-span-5 h-full overflow-hidden">
+                      <img src="<?php echo htmlspecialchars($nf['photos'][1]); ?>" alt="<?php echo htmlspecialchars($nf['title']); ?> 2" class="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105 no-download" loading="lazy">
+                    </div>
+                  </div>
+                <?php else: ?>
+                  <img src="<?php echo htmlspecialchars($nf['photos'][0]); ?>" alt="<?php echo htmlspecialchars($nf['title']); ?>" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 no-download" loading="lazy">
+                <?php endif; ?>
+                <div class="img-shield"></div>
+
+                <div class="absolute top-2.5 left-2.5 flex items-center gap-1.5 z-10">
+                  <span class="text-[10px] font-mono font-extrabold px-2.5 py-0.5 rounded-full bg-navy/90 text-white shadow-sm"><?php echo htmlspecialchars($nf['year']); ?></span>
+                  <?php if ($pCount > 1): ?>
+                    <span class="text-[10px] font-mono font-extrabold px-2 py-0.5 rounded-full bg-teal text-white shadow-sm"><?php echo $pCount; ?> Foto</span>
+                  <?php endif; ?>
+                </div>
+
+                <div class="absolute top-2.5 right-2.5 z-10">
+                  <span class="text-[10px] font-mono font-extrabold px-2.5 py-0.5 rounded-full bg-white/95 text-navy border border-slate-200 shadow-sm">
+                    <?php echo htmlspecialchars($nf['badge']); ?>
+                  </span>
+                </div>
+
+                <div class="absolute inset-0 bg-navy/35 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10 pointer-events-none">
+                  <span class="btn-3d-primary text-xs px-3.5 py-1.5 rounded-xl">Lihat Dokumentasi</span>
+                </div>
+              </div>
+
+              <div class="p-5 z-layer-1">
+                <span class="text-[10.5px] font-mono font-extrabold text-teal uppercase tracking-wider"><?php echo htmlspecialchars($nf['org']); ?></span>
+                <h4 class="text-base font-black text-navy mt-1 leading-snug group-hover:text-teal transition-colors"><?php echo htmlspecialchars($nf['title']); ?></h4>
+                <p class="text-xs text-slate-600 mt-2 leading-relaxed"><?php echo htmlspecialchars($nf['desc']); ?></p>
+              </div>
+            </div>
+
+            <div class="px-5 pb-4 pt-2 border-t border-slate-100 z-layer-1 flex items-center justify-between">
+              <span class="text-[11px] font-extrabold text-teal group-hover:underline">
+                <?php echo $pCount > 1 ? 'Lihat ' . $pCount . ' Foto Dokumentasi &rarr;' : 'Perbesar Dokumentasi &rarr;'; ?>
+              </span>
+            </div>
+          </div>
+        <?php endforeach; ?>
+      </div>
+    </div>
+
+    <!-- BLOCK D: Riwayat Aksi Kemanusiaan 2024 (3 Kartu Horizontal + Dokumentasi Lapangan) -->
+    <div id="aksi-kemanusiaan" class="mt-16 pt-14 border-t border-slate-200/80">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-7 reveal-3d-header">
+        <div>
+          <h3 class="text-xl sm:text-2xl font-black text-navy">Riwayat Aksi Kemanusiaan 2024</h3>
+          <p class="text-slate-500 text-xs mt-0.5 font-medium">Terjun langsung dalam penanggulangan kebakaran, banjir lahar Semeru, dan operasi SAR gabungan.</p>
+        </div>
+        <span class="text-xs font-mono font-extrabold px-3.5 py-1.5 rounded-full bg-rose-50 border border-rose-200 text-rose-700 shadow-sm">
+          <?php echo count($aksi_kemanusiaan); ?> Aksi Lapangan 2024 &middot; 4 Foto
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <?php foreach ($aksi_kemanusiaan as $aksi): $pCount = count($aksi['photos']); ?>
+          <div class="card-3d flex flex-col justify-between h-full cursor-pointer group reveal-3d"
+               data-tilt-3d data-tilt-max="8"
+               data-sk-open
+               data-page-label="Foto"
+               data-category="Aksi Kemanusiaan 2024"
+               data-title="<?php echo htmlspecialchars($aksi['title']); ?>"
+               data-issuer="<?php echo htmlspecialchars($aksi['role'] . ' · ' . $aksi['location']); ?>"
+               data-desc="<?php echo htmlspecialchars($aksi['desc']); ?>"
+               data-img="<?php echo htmlspecialchars($aksi['photos'][0]); ?>"
+               data-pages="<?php echo htmlspecialchars(json_encode($aksi['photos']), ENT_QUOTES, 'UTF-8'); ?>">
+            <div class="card-glare"></div>
+
+            <div>
+              <!-- Action Photo Frame -->
+              <div class="relative aspect-[16/10] rounded-t-[21px] overflow-hidden bg-slate-100 border-b border-slate-200">
+                <?php if ($pCount > 1): ?>
+                  <div class="grid grid-cols-12 gap-0.5 w-full h-full bg-white">
+                    <div class="col-span-7 h-full overflow-hidden">
+                      <img src="<?php echo htmlspecialchars($aksi['photos'][0]); ?>" alt="<?php echo htmlspecialchars($aksi['title']); ?>" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 no-download" loading="lazy">
+                    </div>
+                    <div class="col-span-5 h-full overflow-hidden">
+                      <img src="<?php echo htmlspecialchars($aksi['photos'][1]); ?>" alt="<?php echo htmlspecialchars($aksi['title']); ?> 2" class="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105 no-download" loading="lazy">
+                    </div>
+                  </div>
+                <?php else: ?>
+                  <img src="<?php echo htmlspecialchars($aksi['photos'][0]); ?>" alt="<?php echo htmlspecialchars($aksi['title']); ?>" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 no-download" loading="lazy">
+                <?php endif; ?>
+                <div class="img-shield"></div>
+
+                <div class="absolute top-2.5 left-2.5 flex items-center gap-1.5 z-10">
+                  <span class="text-[10px] font-mono font-extrabold px-2.5 py-0.5 rounded-full bg-rose-600 text-white shadow-sm"><?php echo htmlspecialchars($aksi['year']); ?></span>
+                  <?php if ($pCount > 1): ?>
+                    <span class="text-[10px] font-mono font-extrabold px-2 py-0.5 rounded-full bg-navy/90 text-white shadow-sm"><?php echo $pCount; ?> Foto</span>
+                  <?php endif; ?>
+                </div>
+
+                <div class="absolute top-2.5 right-2.5 z-10">
+                  <span class="text-[10px] font-mono font-extrabold px-2.5 py-0.5 rounded-full bg-white/95 text-navy border border-slate-200 shadow-sm">
+                    <?php echo htmlspecialchars($aksi['role']); ?>
+                  </span>
+                </div>
+
+                <div class="absolute inset-0 bg-navy/35 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-10 pointer-events-none">
+                  <span class="btn-3d-primary text-xs px-3.5 py-1.5 rounded-xl">Lihat Dokumentasi</span>
+                </div>
+              </div>
+
+              <div class="p-5 z-layer-1">
+                <span class="text-[10.5px] font-mono font-extrabold text-rose-600 uppercase tracking-wider"><?php echo htmlspecialchars($aksi['location']); ?></span>
+                <h4 class="text-base font-black text-navy mt-1 leading-snug group-hover:text-teal transition-colors"><?php echo htmlspecialchars($aksi['title']); ?></h4>
+                <p class="text-xs text-slate-600 mt-2 leading-relaxed"><?php echo htmlspecialchars($aksi['desc']); ?></p>
+              </div>
+            </div>
+
+            <div class="px-5 pb-4 pt-2 border-t border-slate-100 z-layer-1 flex items-center justify-between">
+              <span class="text-[11px] font-extrabold text-teal group-hover:underline">
+                <?php echo $pCount > 1 ? 'Lihat ' . $pCount . ' Foto Aksi Lapangan &rarr;' : 'Perbesar Foto Aksi &rarr;'; ?>
+              </span>
+            </div>
+          </div>
+        <?php endforeach; ?>
+      </div>
+    </div>
+
   </div>
 </section>
 

@@ -236,6 +236,76 @@ $kaderisasi = [
     ]
 ];
 
+// ── RIWAYAT KADERISASI NON-FORMAL (Dengan Dokumentasi Foto) ────────────────
+$kaderisasi_nonformal = [
+    [
+        'title'  => 'Madrasah Jurnalistik (Batch #1)',
+        'org'    => 'LTN PCNU Kabupaten Lumajang',
+        'year'   => 'Batch #1',
+        'badge'  => 'Jurnalistik & Media',
+        'desc'   => 'Pelatihan kaderisasi non-formal bidang jurnalistik, penulisan berita, literasi media, dan dakwah digital bersama Lembaga Ta\'lif wan Nasyr (LTN) PCNU Lumajang.',
+        'photos' => [
+            'assets/img/dokumentasi/madrasah_jurnalistik.jpg'
+        ]
+    ],
+    [
+        'title'  => 'Diklat Kebencanaan LPBI NU',
+        'org'    => 'LPBI NU Kabupaten Lumajang & TNI',
+        'year'   => 'Januari 2024',
+        'badge'  => 'Tanggap Bencana',
+        'desc'   => 'Pendidikan dan pelatihan lapangan penanggulangan bencana, manajemen krisis, evakuasi pesisir, dan kesiapsiagaan relawan LPBI NU.',
+        'photos' => [
+            'assets/img/dokumentasi/diklat_lpbi_nu.jpg'
+        ]
+    ],
+    [
+        'title'  => 'Diklatsar Search and Rescue (SAR) Kanjuruhan',
+        'org'    => 'SAR Kanjuruhan · Angkatan ke-3',
+        'year'   => 'Mei 2024',
+        'badge'  => 'SAR & Vertical Rescue',
+        'desc'   => 'Latihan dasar Search and Rescue (SAR) dan pengukuhan anggota Angkatan ke-3 (24–26 Mei 2024), termasuk teknik vertical rescue, harness, dan pertolongan medan ekstrem.',
+        'photos' => [
+            'assets/img/dokumentasi/diklatsar_sar_pengukuhan.jpg',
+            'assets/img/dokumentasi/diklatsar_sar_vertical.jpg'
+        ]
+    ]
+];
+
+// ── RIWAYAT AKSI KEMANUSIAAN 2024 (Dengan Dokumentasi Foto) ────────────────
+$aksi_kemanusiaan = [
+    [
+        'title'    => 'Tanggap Darurat Kebakaran Jatigono',
+        'location' => 'Jatigono, Kec. Kunir, Lumajang',
+        'year'     => '2024',
+        'role'     => 'Relawan LPBI NU',
+        'desc'     => 'Aksi respon cepat, asesmen kerusakan rumah warga, serta koordinasi lapangan bersama aparat kepolisian pada insiden kebakaran di Jatigono, Kunir, Lumajang.',
+        'photos'   => [
+            'assets/img/dokumentasi/aksi_kebakaran_jatigono.jpg'
+        ]
+    ],
+    [
+        'title'    => 'Tanggap Darurat Banjir Semeru 2024',
+        'location' => 'Kawasan Terdampak Semeru, Lumajang',
+        'year'     => '2024',
+        'role'     => 'Relawan LPBI NU & Satgas',
+        'desc'     => 'Aksi kemanusiaan penyaluran bantuan logistik langsung kepada warga terdampak banjir lahar Gunung Semeru serta pemantauan pemukiman bersama tim Satgas.',
+        'photos'   => [
+            'assets/img/dokumentasi/aksi_banjir_semeru_bantuan.jpg',
+            'assets/img/dokumentasi/aksi_banjir_semeru_lapangan.jpg'
+        ]
+    ],
+    [
+        'title'    => 'Operasi Search and Rescue (SAR) 2024',
+        'location' => 'Medan Operasi SAR Gabungan',
+        'year'     => '2024',
+        'role'     => 'Tim Rescue Gabungan',
+        'desc'     => 'Keterlibatan langsung sebagai personel tim rescue dalam operasi pencarian, penyelamatan, dan penyisiran medan berat pada tahun 2024.',
+        'photos'   => [
+            'assets/img/dokumentasi/aksi_operasi_sar_2024.jpg'
+        ]
+    ]
+];
+
 // ── WEBSITE & SISTEM (Grouped into Interactive 3D Folders) ─────────────────
 $systems = [
     [
@@ -1164,3 +1234,44 @@ $nav_links = [
     ['href' => '#sertifikat',  'label' => 'Folder Sertifikat'],
     ['href' => '#kontak',      'label' => 'Kontak']
 ];
+
+// Otomatis tambahkan cache-buster (?v=filemtime) ke semua gambar ber-watermark
+$wm_bust = function (string $path): string {
+    $clean = preg_replace('/\?.*$/', '', $path);
+    $full  = __DIR__ . '/../' . $clean;
+    $v     = @filemtime($full);
+    return $v ? ($clean . '?v=' . $v) : $path;
+};
+
+foreach ($organizations as &$org_item) {
+    if (!empty($org_item['sk'])) {
+        $org_item['sk']['img'] = $wm_bust($org_item['sk']['img']);
+        if (!empty($org_item['sk']['pages'])) {
+            $org_item['sk']['pages'] = array_map($wm_bust, $org_item['sk']['pages']);
+        }
+    }
+}
+unset($org_item);
+
+foreach ($kaderisasi_nonformal as &$nf_item) {
+    $nf_item['photos'] = array_map($wm_bust, $nf_item['photos']);
+}
+unset($nf_item);
+
+foreach ($aksi_kemanusiaan as &$ak_item) {
+    $ak_item['photos'] = array_map($wm_bust, $ak_item['photos']);
+}
+unset($ak_item);
+
+foreach ($all_certificates as &$cert_item) {
+    $cert_item['img'] = $wm_bust($cert_item['img']);
+    if (!empty($cert_item['pages'])) {
+        $cert_item['pages'] = array_map($wm_bust, $cert_item['pages']);
+    }
+}
+unset($cert_item);
+
+foreach ($cert_folders as &$cf_item) {
+    $cf_item['previews'] = array_map($wm_bust, $cf_item['previews']);
+}
+unset($cf_item);
